@@ -1,11 +1,16 @@
 import React from 'react'
-import { useMyHook } from 'use-cloudinary'
+import { useImage } from 'use-cloudinary'
 
 const App = () => {
-  const example = useMyHook()
+  const [cloudinary, status, error] = useImage({ cloud_name: 'testing-hooks-upload' })
+
+  if (status === 'loading') return <p>Loading...</p>
+  if (status === 'error') return <p>{error.message}</p>
   return (
     <div>
-      {example}
+      <img src={cloudinary.getImage({
+        image_name: 'testing'
+      })} />
     </div>
   )
 }
