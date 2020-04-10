@@ -10,17 +10,58 @@
 npm install --save use-cloudinary
 ```
 
-## Usage
+## useImage Usage
 
 ```jsx
 import React, { Component } from 'react'
 
-import { useMyHook } from 'use-cloudinary'
+import { useImage } from 'use-cloudinary'
 
 const Example = () => {
-  const example = useMyHook()
+  const [cloudinary, images, status, error] = useImage({ cloud_name: "your-cloudinary-cloud-name"});
+
+  if (status === "loading") return <p>Loading...</p>;
+  if (status === "error") return <p>{error.message}</p>;
+
+  return <img src={cloudinary.getImage({
+    public_id: "the-images-public-id",
+    transform_options: {
+      width: 200,
+      height: 200
+    }
+  })}>
+}
+```
+
+## useUpload Usage
+
+```jsx
+import React, { Component } from 'react'
+
+import { useImage } from 'use-cloudinary'
+
+const Example = () => {
+  const [cloudinary] = useImage({ cloud_name: "your-cloud-name" }) 
+  const [upload, data, status] = useUpload({ endpoint: "/your/serverless/endpoint" });
+
+  if (status === "loading") return <p>Loading...</p>;
+  if (status === "error") return <p>{error.message}</p>;
+
   return (
-    <div>{example}</div>
+    <div>
+      <input type="file" onChange={() => {
+        // ...stuff to make sure your media is ready to upload to cloudinary
+        upload({
+          file,
+          uploadOptions 
+        });
+      }} />
+      {
+        // once your image is uploaded, feed it to useImage's getImage 
+        data && <img src={cloudinary.getImage({
+          public_id: data.public_id
+      })} />}
+    </div>
   )
 }
 ```

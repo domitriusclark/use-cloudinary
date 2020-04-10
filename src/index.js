@@ -3,10 +3,10 @@ import { useQuery, useMutation } from 'react-query'
 import fetch from 'isomorphic-unfetch'
 import cloudinary from 'cloudinary-core'
 
-export function useUpload() {
+export function useUpload({ endpoint }) {
   const [uploadedImageData, setUploadedImageData] = React.useState()
-  const [mutate] = useMutation(async ({ file, uploadOptions }) => {
-    const res = await fetch('/.netlify/functions/upload', {
+  const [mutate, { status }] = useMutation(async ({ file, uploadOptions }) => {
+    const res = await fetch(endpoint, {
       method: 'POST',
       body: JSON.stringify({
         tags: uploadOptions.tags,
@@ -22,7 +22,7 @@ export function useUpload() {
     }
   })
 
-  return [mutate, uploadedImageData]
+  return [mutate, uploadedImageData, status]
 }
 
 export function useImage({ cloud_name }) {
