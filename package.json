@@ -1,6 +1,6 @@
 {
   "name": "use-cloudinary",
-  "version": "1.0.15",
+  "version": "1.0.2",
   "description": "Hooks created to wrap core cloudinary features for the client",
   "author": "domitriusclark",
   "license": "MIT",
@@ -68,6 +68,7 @@
     "rollup-plugin-url": "^2.1.0"
   },
   "dependencies": {
+    "@jlengstorf/get-share-image": "^0.7.0",
     "cloudinary-core": "^2.8.2",
     "isomorphic-unfetch": "^3.0.0",
     "react-query": "^1.2.1"

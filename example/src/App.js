@@ -1,15 +1,15 @@
 import React from 'react'
-import { useImage } from 'use-cloudinary'
+import { useMedia } from 'use-cloudinary'
 
 const App = () => {
-  const [cloudinary, status, error] = useImage({ cloud_name: 'testing-hooks-upload' })
+  const [{ getImage }, status, error] = useMedia({ cloud_name: '' })
 
   if (status === 'loading') return <p>Loading...</p>
   if (status === 'error') return <p>{error.message}</p>
   return (
     <div>
-      <img src={cloudinary.getImage({
-        image_name: 'testing'
+      <img src={getImage({
+        public_id: 'test toasts'
       })} />
     </div>
   )

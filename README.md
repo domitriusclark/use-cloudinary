@@ -10,20 +10,20 @@
 npm install --save use-cloudinary
 ```
 
-## useImage's getImage
+## useMedia's getImage
 
 ```jsx
 import React from 'react'
 
-import { useImage } from 'use-cloudinary'
+import { useMedia } from 'use-cloudinary'
 
 const Example = () => {
-  const [cloudinary, images, status, error] = useImage({ cloud_name: "your-cloudinary-cloud-name"});
+  const [{ getImage }] = useMedia({ cloud_name: "your-cloudinary-cloud-name"});
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>{error.message}</p>;
 
-  return <img src={cloudinary.getImage({
+  return <img src={getImage({
     public_id: "the-images-public-id",
     transform_options: {
       width: 200,
@@ -33,29 +33,55 @@ const Example = () => {
 }
 ```
 
-## useImage's getImagesByTag
+## useMedia's getVideo
 
 ```jsx
 import React from 'react'
 
-import { useImage } from 'use-cloudinary'
+import { useMedia } from 'use-cloudinary'
+
+const Example = () => {
+  const [{ getVideo }] = useMedia({ cloud_name: "your-cloudinary-cloud-name"});
+
+  return 
+    <>
+      <video autoPlay>
+        <source src={getVideo({
+          public_id: "the-videos-public-id",
+          transform_options: {
+            width: 500,
+            height: 300,
+            crop: 'scale'
+          }})} 
+        />
+      </video>
+}
+```
+
+## useMedia's getImagesByTag
+
+```jsx
+import React from 'react'
+
+import { useMedia } from 'use-cloudinary'
 
 function Example() {
-  const [cloudinary, images, status] = useCloudinaryImage({ cloud_name: "your-cloud-name" });
+  const [{ getImagesByTag, getImage }, images, status, error] = useMedia({ cloud_name: "your-cloud-name" });
 
   // Feed a specified tag from your library to pull all images
   const [input, setInput] = React.useState();
 
   if (status === "loading") return <p>Loading...</p>;
+  if (status === "error") return <p>{error.message}</p>;
 
   return (
     <div>
       <input onChange={e => setInput(e.target.value)} />
-      <button onClick={() => cloudinary.getImagesByTag(input)}>Search</button>
+      <button onClick={() => getImagesByTag(input)}>Search</button>
       {images && images.resources.map(i =>
-        <img src={cloudinary.getImage(
+        <img src={getImage(
           {
-            image_name: i.public_id,
+            public_id: i.public_id,
             transform_options: {
               width: 400,
               height: 400
@@ -72,10 +98,10 @@ function Example() {
 ```jsx
 import React from 'react'
 
-import { useImage, useUpload } from 'use-cloudinary'
+import { useMedia, useUpload } from 'use-cloudinary'
 
 const Example = () => {
-  const [cloudinary] = useImage({ cloud_name: "your-cloud-name" }) 
+  const [{ getImage }] = useMedia({ cloud_name: "your-cloud-name" }) 
   const [upload, data, status] = useUpload({ endpoint: "/your/serverless/endpoint" });
 
   if (status === "loading") return <p>Loading...</p>;
@@ -92,9 +118,9 @@ const Example = () => {
       }} />
       {
         // once your image is uploaded, feed it to useImage's getImage 
-        data && <img src={cloudinary.getImage({
+        data && <img src={getImage({
           public_id: data.public_id
-      })} />}
+        })} />}
     </div>
   )
 }
