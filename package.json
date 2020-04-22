@@ -1,6 +1,6 @@
 {
   "name": "use-cloudinary",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Hooks created to wrap core cloudinary features for the client",
   "author": "domitriusclark",
   "license": "MIT",
@@ -43,6 +43,7 @@
     "@babel/plugin-proposal-throw-expressions": "^7.0.0",
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/plugin-syntax-import-meta": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.9.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@testing-library/react-hooks": "^3.2.1",
@@ -68,6 +69,7 @@
     "rollup-plugin-url": "^2.1.0"
   },
   "dependencies": {
+    "@babel/runtime": "^7.9.2",
     "@jlengstorf/get-share-image": "^0.7.0",
     "cloudinary-core": "^2.8.2",
     "isomorphic-unfetch": "^3.0.0",
