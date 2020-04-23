@@ -63,7 +63,7 @@ const App = () => {
   return (
     <div>
       <Image publicId="test toasts" transforms={{ height: 0.3, crop: 'scale' }} />
-      <Gif publicId="gif test" transforms={{ height: 0.3, crop: 'scale' }} />
+      <Gif publicId="trees" transforms={{ height: 0.3, crop: 'scale' }} />
       <Video publicId="gif test" transforms={{ height: 0.3, crop: 'scale' }} />
     </div>
   )
