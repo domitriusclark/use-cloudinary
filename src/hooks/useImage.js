@@ -11,7 +11,6 @@ export default function useImage({ cloud_name }) {
   });
 
   const { data, status, error } = useQuery(imageOptions && [`${imageOptions.public_id}-url`, imageOptions], async (key, imageOptions) => {
-    console.log(imageOptions)
     const image = await cld.url(imageOptions.public_id, {
       ...imageOptions.transform_options
     });

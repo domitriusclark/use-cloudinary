@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useMutation } from 'react-query';
 
 export default function useSearch({ endpoint }) {

@@ -2,7 +2,7 @@ import { useMutation } from 'react-query';
 import fetch from 'isomorphic-unfetch';
 
 export default function useUpload({ endpoint }) {
-  const [upload, { data: uploadedImage, status: uploadStatus, error: uploadError }] = useMutation(async ({ file, uploadOptions }) => {
+  const [upload, { data, status, error }] = useMutation(async ({ file, uploadOptions }) => {
     const res = await fetch(endpoint, {
       method: 'POST',
       body: JSON.stringify({
@@ -18,10 +18,6 @@ export default function useUpload({ endpoint }) {
     refetchOnWindowFocus: false
   })
 
-  const cloudinaryObject = {
-    upload,
-    createSocialTemplate
-  }
 
-  return [cloudinaryObject, uploadedImage, uploadStatus, uploadError]
+  return [upload, data, status, error]
 }

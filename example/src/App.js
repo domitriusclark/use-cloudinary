@@ -10,6 +10,7 @@ function Image({ publicId, transforms }) {
         ...transforms
       }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (status === "loading") return <p>Loading...</p>;
@@ -27,6 +28,7 @@ function Video({ publicId, transforms }) {
         ...transforms
       }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (status === "loading") return <p>Loading...</p>;
@@ -48,6 +50,7 @@ function Gif({ publicId, transforms }) {
         ...transforms
       }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (status === "loading") return <p>Loading...</p>;
