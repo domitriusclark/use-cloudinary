@@ -10,99 +10,146 @@
 npm install --save use-cloudinary
 ```
 
-## useMedia's getImage
+## useImage
 
 ```jsx
 import React from 'react'
 
-import { useMedia } from 'use-cloudinary'
+import { useImage } from 'use-cloudinary'
 
-const Example = () => {
-  const [{ getImage }] = useMedia({ cloud_name: "your-cloudinary-cloud-name"});
+function Image() {
+  const [getImage, data, status, error] = useImage({ cloud_name: "your-cloud-name" });
+  React.useEffect(() => {
+    getImage({
+      public_id: 'image-public-id',
+      transform_options: {
+        height: 0.3,
+        crop: 'scale'
+      }
+    })
+  }, [])
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>{error.message}</p>;
 
-  return <img src={getImage({
-    public_id: "the-images-public-id",
-    transform_options: {
-      width: 200,
-      height: 200
-    }
-  })}>
+  return <img src={data} alt="Transformed from Cloudinary" />
 }
 ```
 
-## useMedia's getVideo
+## useVideo
 
 ```jsx
 import React from 'react'
 
 import { useMedia } from 'use-cloudinary'
 
-const Example = () => {
-  const [{ getVideo }] = useMedia({ cloud_name: "your-cloudinary-cloud-name"});
-
-  return 
-    <>
-      <video autoPlay>
-        <source src={getVideo({
-          public_id: "the-videos-public-id",
-          transform_options: {
-            width: 500,
-            height: 300,
-            crop: 'scale'
-          }})} 
-        />
-      </video>
-}
-```
-
-## useMedia's getImagesByTag
-
-```jsx
-import React from 'react'
-
-import { useMedia } from 'use-cloudinary'
-
-function Example() {
-  const [{ getImagesByTag, getImage }, images, status, error] = useMedia({ cloud_name: "your-cloud-name" });
-
-  // Feed a specified tag from your library to pull all images
-  const [input, setInput] = React.useState();
+function Video() {
+  const [getVideo, data, status, error] = useVideo({ cloud_name: "your-cloud-name" })
+  React.useEffect(() => {
+    getVideo({
+      public_id: 'video-public-id,
+      transform_options: {
+        height: 0.3,
+        crop: 'scale'
+      }
+    })
+  }, [])
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>{error.message}</p>;
 
   return (
-    <div>
-      <input onChange={e => setInput(e.target.value)} />
-      <button onClick={() => getImagesByTag(input)}>Search</button>
-      {images && images.resources.map(i =>
-        <img src={getImage(
-          {
-            public_id: i.public_id,
-            transform_options: {
-              width: 400,
-              height: 400
-            }
-          }
-        )} />
-      )}
-    </div>
+    <video autoPlay controls>
+      <source src={data} />
+    </video>
+  )
+}
+```
+
+## useGif
+
+```jsx
+import React from 'react'
+
+import { useMedia } from 'use-cloudinary'
+
+function Gif() {
+  const [getGif, data, status, error] = useGif({ cloud_name: "your-cloud-name" })
+  React.useEffect(() => {
+    getGif({
+      public_id: 'video-public-id-for-gif,
+      transform_options: {
+        height: 0.3,
+        crop: 'scale'
+      }
+    })
+  }, [])
+
+  if (status === "loading") return <p>Loading...</p>;
+  if (status === "error") return <p>{error.message}</p>;
+
+  return <img src={data} alt='gif from a video'/>
 }
 ```
 
 ## useUpload
 
+Example of a serverless function you'd create 
+(Guide coming soon 😅)
+```js
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET
+})
+
+exports.handler = (event) => {
+  const { public_id, file, tags, eager, type = 'auto', size } = JSON.parse(event.body);
+
+  async function chooseUpload() {
+    function formatBytes(bytes, decimals = 2) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return [parseFloat((bytes / Math.pow(k, i)).toFixed(dm)), sizes[i]];
+    }
+
+    if (formatBytes(size)[0] > 100 && formatBytes(size)[1] === "MB") {
+      await cloudinary.uploader.upload_large(file, {
+        public_id,
+        resource_type: type,
+        tags,
+        eager
+      })
+    } else {
+      await cloudinary.uploader.upload(file, {
+        public_id,
+        resource_type: type,
+        tags,
+        eager
+      })
+    }
+  }
+
+  const res = chooseUpload();
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify(res)
+  }
+}
+```
 ```jsx
 import React from 'react'
 
 import { useMedia, useUpload } from 'use-cloudinary'
 
-const Example = () => {
-  const [{ getImage }] = useMedia({ cloud_name: "your-cloud-name" }) 
-  const [upload, data, status] = useUpload({ endpoint: "/your/serverless/endpoint" });
+function Upload() {
+  const [upload, data, status] = useUpload({ endpoint: "/your/endpoint" });
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>{error.message}</p>;
@@ -110,21 +157,70 @@ const Example = () => {
   return (
     <div>
       <input type="file" onChange={() => {
-        // ...stuff to make sure your media is ready to upload to cloudinary
+        // ...stuff to make sure your media is ready to upload 
         upload({
           file,
           uploadOptions 
         });
       }} />
-      {
-        // once your image is uploaded, feed it to useImage's getImage 
-        data && <img src={getImage({
-          public_id: data.public_id
-        })} />}
+      {data && <img src={data.url} />}
     </div>
   )
 }
 ```
+
+## useSearch
+
+Example of a serverless function you'd create 
+(Guide coming soon 😅)
+```js
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET
+})
+
+exports.handler = async (event) => {
+  const body = JSON.parse(event.body);
+  const res = await cloudinary.search
+    .expression(body.expression)
+    .execute().then(result => result);
+  return {
+    statusCode: 200,
+    body: JSON.stringify(res)
+  }
+}
+```
+```jsx
+import Image from './Image';
+import { useSearch } from 'use-cloudinary';
+
+// Here's an example of getting all the images in your account 
+export default function Images() {
+  const [search, data, status] = useSearch({ endpoint: 'your/endpoint' });
+
+  if (status === "loading") return <p>Loading...</p>;
+
+  return (
+    <div>
+      <button onClick={() => search({
+        expression: "resource_type:image"
+      })}>
+        Load
+      </button>
+      <div>
+        {
+          data && data.resources.map(image => (
+            <Image publicId={image.public_id} transforms={{ height: 0.2, border: "2px_solid_black" }} />
+          )}
+      </div>
+    </div >
+  )
+}
+```
+
 
 ## License
 
