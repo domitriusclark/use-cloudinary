@@ -41,13 +41,13 @@ function Image() {
 ```jsx
 import React from 'react'
 
-import { useMedia } from 'use-cloudinary'
+import { useVideo } from 'use-cloudinary'
 
 function Video() {
   const [getVideo, data, status, error] = useVideo({ cloud_name: "your-cloud-name" })
   React.useEffect(() => {
     getVideo({
-      public_id: 'video-public-id,
+      public_id: 'video-public-id',
       transform_options: {
         height: 0.3,
         crop: 'scale'
@@ -71,13 +71,13 @@ function Video() {
 ```jsx
 import React from 'react'
 
-import { useMedia } from 'use-cloudinary'
+import { useGif } from 'use-cloudinary'
 
 function Gif() {
   const [getGif, data, status, error] = useGif({ cloud_name: "your-cloud-name" })
   React.useEffect(() => {
     getGif({
-      public_id: 'video-public-id-for-gif,
+      public_id: 'video-public-id-for-gif',
       transform_options: {
         height: 0.3,
         crop: 'scale'
@@ -146,7 +146,7 @@ exports.handler = (event) => {
 ```jsx
 import React from 'react'
 
-import { useMedia, useUpload } from 'use-cloudinary'
+import { useUpload } from 'use-cloudinary'
 
 function Upload() {
   const [upload, data, status] = useUpload({ endpoint: "/your/endpoint" });
