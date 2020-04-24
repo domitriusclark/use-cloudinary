@@ -1,11 +1,15 @@
-import { useMyHook } from './'
+import {
+  useImage,
+  useVideo,
+  useGif,
+  useSearch,
+  useUpload
+} from './index';
+
 import { renderHook, act } from "@testing-library/react-hooks";
 
-// mock timer using jest
-jest.useFakeTimers();
-
 describe('useMyHook', () => {
-  it('updates every second', () => {
+  it('displays an image with transformations', () => {
     const { result } = renderHook(() => useMyHook());
 
     expect(result.current).toBe(0);
