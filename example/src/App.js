@@ -13,12 +13,16 @@ function Audio({ publicId, transforms }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  console.log(data);
-
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>{error.message}</p>;
 
-  return <p>Hello</p>
+  return (
+    <div>
+      <audio controls>
+        <source src={data} type="audio/mp3" />
+      </audio>
+    </div>
+  )
 }
 
 function Image({ publicId, transforms }) {

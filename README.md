@@ -92,6 +92,34 @@ function Gif() {
 }
 ```
 
+## useAudio
+
+```jsx
+function Audio({ publicId, transforms }) {
+  const [getAudio, data, status, error] = useAudio({ cloud_name: "testing-hooks-upload" });
+  React.useEffect(() => {
+    getAudio({
+      public_id: publicId,
+      transform_options: {
+        ...transforms
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  if (status === "loading") return <p>Loading...</p>;
+  if (status === "error") return <p>{error.message}</p>;
+
+  return (
+    <div>
+      <audio controls>
+        <source src={data} type="audio/mp3" />
+      </audio>
+    </div>
+  )
+}
+```
+
 ## useUpload
 
 Example of a serverless function you'd create 
