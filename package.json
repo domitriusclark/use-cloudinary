@@ -1,6 +1,6 @@
 {
   "name": "use-cloudinary",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Hooks created to wrap core cloudinary features for the client",
   "author": "domitriusclark",
   "license": "MIT",
@@ -70,7 +70,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.9.2",
-    "@jlengstorf/get-share-image": "^0.7.0",
     "cloudinary-core": "^2.8.2",
     "isomorphic-unfetch": "^3.0.0",
     "react-query": "^1.2.1"
