@@ -2,7 +2,7 @@ import React from 'react'
 import { useImage, useVideo, useGif, useAudio } from 'use-cloudinary'
 
 function Audio({ publicId, transforms }) {
-  const [getAudio, data, status, error] = useAudio({ cloud_name: "testing-hooks-upload" });
+  const { getAudio, data, status, error } = useAudio({ cloud_name: "testing-hooks-upload" });
   React.useEffect(() => {
     getAudio({
       public_id: publicId,
@@ -26,7 +26,7 @@ function Audio({ publicId, transforms }) {
 }
 
 function Image({ publicId, transforms }) {
-  const [getImage, data, status, error] = useImage({ cloud_name: "testing-hooks-upload" });
+  const { getImage, data, status, error } = useImage({ cloud_name: "testing-hooks-upload" });
   React.useEffect(() => {
     getImage({
       public_id: publicId,
@@ -44,7 +44,7 @@ function Image({ publicId, transforms }) {
 }
 
 function Video({ publicId, transforms }) {
-  const [getVideo, data, status, error] = useVideo({ cloud_name: "testing-hooks-upload" })
+  const { getVideo, data, status, error } = useVideo({ cloud_name: "testing-hooks-upload" })
   React.useEffect(() => {
     getVideo({
       public_id: publicId,
@@ -66,7 +66,7 @@ function Video({ publicId, transforms }) {
 }
 
 function Gif({ publicId, transforms }) {
-  const [getGif, data, status, error] = useGif({ cloud_name: "testing-hooks-upload" })
+  const { getGif, data, status, error } = useGif({ cloud_name: "testing-hooks-upload" })
   React.useEffect(() => {
     getGif({
       public_id: publicId,
