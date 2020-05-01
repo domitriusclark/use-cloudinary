@@ -21,6 +21,6 @@ export default function useAudio({ cloud_name }) {
     return setAudioOptions({ public_id, transform_options })
   }
 
-  return [getAudio, data, status, error]
+  return { getAudio, data, status, error }
 
 }

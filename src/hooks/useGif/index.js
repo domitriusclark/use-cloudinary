@@ -24,6 +24,6 @@ export default function useGif({ cloud_name }) {
     return setGifOptions({ public_id, transform_options })
   }
 
-  return [getGif, data, status, error]
+  return { getGif, data, status, error }
 
 }

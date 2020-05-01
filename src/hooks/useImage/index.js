@@ -2,8 +2,12 @@ import * as React from 'react';
 import { useQuery } from 'react-query'
 import cloudinary from 'cloudinary-core'
 
-export default function useImage({ cloud_name }) {
+export default function useImage({ cloud_name } = {}) {
   const cld = cloudinary.Cloudinary.new({ cloud_name })
+
+  if (!cloud_name) {
+    throw new Error("Must enter a cloud name")
+  }
 
   const [imageOptions, setImageOptions] = React.useState({
     public_id: '',
@@ -18,10 +22,12 @@ export default function useImage({ cloud_name }) {
     return image
   })
 
-  function getImage({ public_id, transform_options }) {
+  function getImage({ public_id, transform_options } = {}) {
+    if (!public_id) {
+      throw new Error("Must provide a public id of your asset")
+    }
     return setImageOptions({ public_id, transform_options });
   }
 
-  return [getImage, data, status, error]
-
+  return { getImage, data, status, error }
 }

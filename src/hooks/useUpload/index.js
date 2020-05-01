@@ -1,7 +1,11 @@
 import { useMutation } from 'react-query';
 import fetch from 'isomorphic-unfetch';
 
-export default function useUpload({ endpoint }) {
+export default function useUpload({ endpoint } = {}) {
+  if (!endpoint) {
+    throw new Error("Must provide an endpoint to upload")
+  }
+
   const [upload, { data, status, error }] = useMutation(async ({ file, uploadOptions }) => {
     const res = await fetch(endpoint, {
       method: 'POST',
@@ -14,10 +18,8 @@ export default function useUpload({ endpoint }) {
     })
 
     return res.json()
-  }, {
-    refetchOnWindowFocus: false
   })
 
 
-  return [upload, data, status, error]
+  return { upload, data, status, error }
 }
