@@ -18,7 +18,7 @@ import React from 'react'
 import { useImage } from 'use-cloudinary'
 
 function Image() {
-  const [getImage, data, status, error] = useImage({ cloud_name: "your-cloud-name" });
+  const {getImage, data, status, error} = useImage({ cloud_name: "your-cloud-name" });
   React.useEffect(() => {
     getImage({
       public_id: 'image-public-id',
@@ -44,7 +44,7 @@ import React from 'react'
 import { useVideo } from 'use-cloudinary'
 
 function Video() {
-  const [getVideo, data, status, error] = useVideo({ cloud_name: "your-cloud-name" })
+  const {getVideo, data, status, error} = useVideo({ cloud_name: "your-cloud-name" })
   React.useEffect(() => {
     getVideo({
       public_id: 'video-public-id',
@@ -74,7 +74,7 @@ import React from 'react'
 import { useGif } from 'use-cloudinary'
 
 function Gif() {
-  const [getGif, data, status, error] = useGif({ cloud_name: "your-cloud-name" })
+  const {getGif, data, status, error} = useGif({ cloud_name: "your-cloud-name" })
   React.useEffect(() => {
     getGif({
       public_id: 'video-public-id-for-gif',
@@ -96,7 +96,7 @@ function Gif() {
 
 ```jsx
 function Audio({ publicId, transforms }) {
-  const [getAudio, data, status, error] = useAudio({ cloud_name: "testing-hooks-upload" });
+  const {getAudio, data, status, error} = useAudio({ cloud_name: "testing-hooks-upload" });
   React.useEffect(() => {
     getAudio({
       public_id: publicId,
@@ -177,7 +177,7 @@ import React from 'react'
 import { useUpload } from 'use-cloudinary'
 
 function Upload() {
-  const [upload, data, status] = useUpload({ endpoint: "/your/endpoint" });
+  const {upload, data, status} = useUpload({ endpoint: "/your/endpoint" });
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>{error.message}</p>;
@@ -227,7 +227,7 @@ import { useSearch } from 'use-cloudinary';
 
 // Here's an example of getting all the images in your account 
 export default function Images() {
-  const [search, data, status] = useSearch({ endpoint: 'your/endpoint' });
+  const {search, data, status} = useSearch({ endpoint: 'your/endpoint' });
 
   if (status === "loading") return <p>Loading...</p>;
 
