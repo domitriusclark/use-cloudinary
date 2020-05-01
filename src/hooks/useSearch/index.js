@@ -1,6 +1,11 @@
 import { useMutation } from 'react-query';
+import fetch from 'isomorphic-unfetch';
 
-export default function useSearch({ endpoint }) {
+export default function useSearch({ endpoint } = {}) {
+  if (!endpoint) {
+    throw new Error("Must provide an endpoint to search");
+  }
+
   const [search, { data, status, error }] = useMutation(async (searchBody) => {
     const res = await fetch(endpoint, {
       method: "POST",
@@ -12,5 +17,5 @@ export default function useSearch({ endpoint }) {
     return res.json();
   });
 
-  return [search, data, status, error]
+  return { search, data, status, error }
 } 

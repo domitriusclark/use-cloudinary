@@ -22,6 +22,6 @@ export default function useVideo({ cloud_name }) {
     return setVideoOptions({ public_id, transform_options });
   }
 
-  return [getVideo, data, status, error]
+  return { getVideo, data, status, error }
 
 }
