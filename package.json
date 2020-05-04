@@ -1,6 +1,6 @@
 {
   "name": "use-cloudinary",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Hooks created to wrap core cloudinary features for the client",
   "author": "domitriusclark",
   "license": "MIT",

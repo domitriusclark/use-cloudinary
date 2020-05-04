@@ -13,18 +13,16 @@ npm install --save use-cloudinary
 ## useImage
 
 ```jsx
-import React from 'react'
-
 import { useImage } from 'use-cloudinary'
 
-function Image() {
-  const {getImage, data, status, error} = useImage({ cloud_name: "your-cloud-name" });
+function Image({ cloudName, publicId, transforms }) {
+  const { getImage, data, status, error } = useImage({ cloud_name: cloudName });
+
   React.useEffect(() => {
     getImage({
-      public_id: 'image-public-id',
+      public_id: publicId,
       transform_options: {
-        height: 0.3,
-        crop: 'scale'
+        ...transforms
       }
     })
   }, [])
@@ -39,18 +37,15 @@ function Image() {
 ## useVideo
 
 ```jsx
-import React from 'react'
-
 import { useVideo } from 'use-cloudinary'
 
-function Video() {
-  const {getVideo, data, status, error} = useVideo({ cloud_name: "your-cloud-name" })
+function Video({ cloudName, publicId, transforms }) {
+  const { getVideo, data, status, error } = useVideo({ cloud_name: "your-cloud-name" })
   React.useEffect(() => {
     getVideo({
-      public_id: 'video-public-id',
+      public_id: publicId,
       transform_options: {
-        height: 0.3,
-        crop: 'scale'
+        ...transforms
       }
     })
   }, [])
@@ -69,18 +64,16 @@ function Video() {
 ## useGif
 
 ```jsx
-import React from 'react'
-
 import { useGif } from 'use-cloudinary'
 
-function Gif() {
-  const {getGif, data, status, error} = useGif({ cloud_name: "your-cloud-name" })
+function Gif({ cloudName, publicId, transforms }) {
+  const { getGif, data, status, error } = useGif({ cloud_name: cloudName })
+  
   React.useEffect(() => {
     getGif({
-      public_id: 'video-public-id-for-gif',
+      public_id: publicId, 
       transform_options: {
-        height: 0.3,
-        crop: 'scale'
+        ...transforms
       }
     })
   }, [])
@@ -95,8 +88,11 @@ function Gif() {
 ## useAudio
 
 ```jsx
-function Audio({ publicId, transforms }) {
-  const {getAudio, data, status, error} = useAudio({ cloud_name: "testing-hooks-upload" });
+import { useAudio } from 'use-cloudinary';
+
+function Audio({ cloudName, publicId, transforms }) {
+  const { getAudio, data, status, error } = useAudio({ cloud_name: cloudName });
+  
   React.useEffect(() => {
     getAudio({
       public_id: publicId,
@@ -104,7 +100,6 @@ function Audio({ publicId, transforms }) {
         ...transforms
       }
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (status === "loading") return <p>Loading...</p>;
@@ -136,34 +131,12 @@ cloudinary.config({
 exports.handler = (event) => {
   const { public_id, file, tags, eager, type = 'auto', size } = JSON.parse(event.body);
 
-  async function chooseUpload() {
-    function formatBytes(bytes, decimals = 2) {
-      if (bytes === 0) return '0 Bytes';
-      const k = 1024;
-      const dm = decimals < 0 ? 0 : decimals;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return [parseFloat((bytes / Math.pow(k, i)).toFixed(dm)), sizes[i]];
-    }
-
-    if (formatBytes(size)[0] > 100 && formatBytes(size)[1] === "MB") {
-      await cloudinary.uploader.upload_large(file, {
-        public_id,
-        resource_type: type,
-        tags,
-        eager
-      })
-    } else {
-      await cloudinary.uploader.upload(file, {
-        public_id,
-        resource_type: type,
-        tags,
-        eager
-      })
-    }
-  }
-
-  const res = chooseUpload();
+  const res = await cloudinary.uploader.upload(file, {
+    public_id,
+    resource_type: type,
+    tags,
+    eager
+  })
 
   return {
     statusCode: 200,
@@ -172,12 +145,10 @@ exports.handler = (event) => {
 }
 ```
 ```jsx
-import React from 'react'
-
 import { useUpload } from 'use-cloudinary'
 
-function Upload() {
-  const {upload, data, status} = useUpload({ endpoint: "/your/endpoint" });
+function Upload({ endpoint }) {
+  const { upload, data, status } = useUpload({ endpoint });
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>{error.message}</p>;
@@ -226,8 +197,8 @@ import Image from './Image';
 import { useSearch } from 'use-cloudinary';
 
 // Here's an example of getting all the images in your account 
-export default function Images() {
-  const {search, data, status} = useSearch({ endpoint: 'your/endpoint' });
+export default function Images({ endpoint }) {
+  const { search, data, status } = useSearch({ endpoint: endpoint });
 
   if (status === "loading") return <p>Loading...</p>;
 
