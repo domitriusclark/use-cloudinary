@@ -27,7 +27,7 @@ export default {
       exclude: 'node_modules/**',
       runtimeHelpers: true
     }),
-    resolve(),
     commonjs()
+    // resolve()
   ]
 }
