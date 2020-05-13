@@ -3,7 +3,7 @@ import { useQuery } from 'react-query'
 import cloudinary from 'cloudinary-core'
 
 export default function useImage({ cloud_name } = {}) {
-  const cld = cloudinary.Cloudinary.new({ cloud_name })
+  const cld = cloudinary.Cloudinary.new({ cloud_name }, { secure: true })
 
   if (!cloud_name) {
     throw new Error("Must enter a cloud name")
@@ -25,6 +25,14 @@ export default function useImage({ cloud_name } = {}) {
   function getImage({ public_id, transform_options } = {}) {
     if (!public_id) {
       throw new Error("Must provide a public id of your asset")
+    }
+    if (
+      (transform_options.hasOwnProperty('width') || transform_options.hasOwnProperty('height'))
+      && !transform_options.hasOwnProperty('crop')) {
+        transform_options.crop = 'scale';
+    }
+    if (!transform_options.hasOwnProperty('fetchFormat')) {
+        transform_options.fetchFormat = 'auto';
     }
     return setImageOptions({ public_id, transform_options });
   }
