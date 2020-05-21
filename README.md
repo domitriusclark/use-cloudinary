@@ -2,6 +2,8 @@
 
 > Hooks created to wrap core cloudinary features for the client
 
+Check out our [Docs](https://use-cloudinary.netlify.app/) for a deeper dive!
+
 [![NPM](https://img.shields.io/npm/v/use-cloudinary.svg)](https://www.npmjs.com/package/use-cloudinary) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Install
