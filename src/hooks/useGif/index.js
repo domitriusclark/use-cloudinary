@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import cloudinary from 'cloudinary-core'
 
 export default function useGif({ cloud_name }) {
-  const cld = cloudinary.Cloudinary.new({ cloud_name })
+  const cld = cloudinary.Cloudinary.new({ cloud_name }, { secure: true })
 
   const [gifOptions, setGifOptions] = React.useState({
     public_id: '',
