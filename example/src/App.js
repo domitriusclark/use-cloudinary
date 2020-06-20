@@ -25,22 +25,17 @@ function Audio({ publicId, transforms }) {
   )
 }
 
-function Image({ publicId, transforms }) {
-  const { getImage, data, status, error } = useImage({ cloud_name: "testing-hooks-upload" });
+function Image({ publicId, transformations }) {
+  const { generateUrl, url, status, error } = useImage({ cloud_name: "testing-hooks-upload" });
   React.useEffect(() => {
-    getImage({
-      public_id: publicId,
-      transform_options: {
-        ...transforms
-      }
-    })
+    generateUrl({ publicId, transformations })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>{error.message}</p>;
 
-  return <img src={data} alt="Transformed from Cloudinary" />
+  return <img src={url} alt="Transformed from Cloudinary" />
 }
 
 function Video({ publicId, transforms }) {
@@ -87,9 +82,9 @@ const App = () => {
   return (
     <div>
       <Audio publicId="game-sounds/switch" />
-      <Image publicId="test toasts" transforms={{ height: 0.3, crop: 'scale' }} />
-      <Gif publicId="trees" transforms={{ height: 0.3, crop: 'scale' }} />
-      <Video publicId="gif test" transforms={{ height: 0.3, crop: 'scale' }} />
+      <Image publicId="6" transformations={{ height: 0.3 }} />
+      <Gif publicId="trees" transforms={{ height: 0.3 }} />
+      <Video publicId="gif test" transforms={{ height: 0.3 }} />
     </div>
   )
 }

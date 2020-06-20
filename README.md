@@ -15,24 +15,63 @@ npm install --save use-cloudinary
 ## useImage
 
 ```jsx
-import { useImage } from 'use-cloudinary'
+import { useImage } from 'use-cloudinary';
 
-function Image({ cloudName, publicId, transforms }) {
-  const { getImage, data, status, error } = useImage({ cloud_name: cloudName });
+function Image({ publicId, transformations, width, height, alt }) {
+  const { generateUrl, url, status, error } = useImage({ cloudName: 'testing-hooks-upload' });
 
   React.useEffect(() => {
-    getImage({
-      public_id: publicId,
-      transform_options: {
-        ...transforms
+    // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your image url 
+    generateUrl({
+      publicId,
+      transformations: {
+        // by supplying height and width separately from the transformations object, 
+        // we can use the height and width to dictate the size of the element AND the transformations
+        height,
+        width,
+        // then we can spread the rest of the transformations in
+        ...transformations
+
+        /* 
+          you'll also be getting these automatically attached from internals
+
+          fetchFormat: 'auto',
+          quality: 'auto',
+          crop: 'scale'
+
+        */
+        
       }
-    })
-  }, [])
+    });
+  });
 
-  if (status === "loading") return <p>Loading...</p>;
-  if (status === "error") return <p>{error.message}</p>;
+  // status can either be "success", "loading", or "error"
+  if (status === 'loading') return <p>Loading...</p>;
 
-  return <img src={data} alt="Transformed from Cloudinary" />
+  // we can check if the status of our request is an error, and surface that error to our UI
+  if (status === "error") return <p>{error.message}</p>
+
+  return (
+    <img
+      // we also have changed `data` to `url` to better describe what `generateUrl` gives us back and makes more sense to pass to `src`
+      styles={{
+        width,
+        height
+      }}
+      src={url}
+      alt={alt}
+    />
+  )
+}
+
+function Main() {
+  return (
+    <Image
+      publicId="test toasts"
+      height={1200}
+      width={600}
+    />
+  )
 }
 ```
 
