@@ -22,7 +22,7 @@ export default function useVideo({ cloudName }) {
     return video;
   })
 
-  function generateUrl({ publicId, tr }) {
+  function generateUrl({ publicId, transformations }) {
     // Attach { crop: 'scale' } automatically when height or width options are supplied. This is to handle applying those transformations properly
     if (
       (transformations.hasOwnProperty('width') || transformations.hasOwnProperty('height'))
