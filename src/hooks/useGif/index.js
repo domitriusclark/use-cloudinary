@@ -2,28 +2,39 @@ import * as React from 'react';
 import { useQuery } from 'react-query';
 import cloudinary from 'cloudinary-core'
 
-export default function useGif({ cloud_name }) {
-  const cld = cloudinary.Cloudinary.new({ cloud_name }, { secure: true })
+export default function useGif({ cloudName }) {
+  const cld = cloudinary.Cloudinary.new({ cloud_name: cloudName }, { secure: true })
 
   const [gifOptions, setGifOptions] = React.useState({
-    public_id: '',
-    transform_options: {}
+    publicId: '',
+    transformations: {}
   });
 
-  const { data, status, error } = useQuery(gifOptions && [`${gifOptions.public_id}-url`, gifOptions], async (key, gifOptions) => {
-    const gif = cld.video_url(`${gifOptions.public_id}.gif`, {
-      ...gifOptions.transform_options,
+  const { data: url, status, error } = useQuery(gifOptions && [`${gifOptions.publicId}-url`, gifOptions], async (key, gifOptions) => {
+    const gif = cld.video_url(`${gifOptions.publicId}.gif`, {
+      ...gifOptions.transformations,
       flags: "animated",
-      fetchFormat: "auto",
       effect: "loop",
     })
     return gif;
   })
 
-  function getGif({ public_id, transform_options }) {
-    return setGifOptions({ public_id, transform_options })
+  function generateUrl({ publicId, transformations }) {
+    // Attach { crop: 'scale' } automatically when height or width options are supplied. This is to handle applying those transformations properly
+    if (
+      (transformations.hasOwnProperty('width') || transformations.hasOwnProperty('height'))
+      && !transformations.hasOwnProperty('crop')) {
+      transformations.crop = 'scale';
+    }
+
+    // Attach { fetchFormat: 'auto' } automatically when no config is supplied. This will deliver the proper gif format automatically depending on your browser
+    if (!transformations.hasOwnProperty('fetchFormat')) {
+      transformations.fetchFormat = 'auto';
+    }
+
+    return setGifOptions({ publicId, transformations })
   }
 
-  return { getGif, data, status, error }
+  return { generateUrl, url, status, error }
 
 }
