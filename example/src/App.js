@@ -2,14 +2,10 @@ import React from 'react'
 import { useImage, useVideo, useGif, useAudio } from 'use-cloudinary'
 
 function Audio({ publicId, transformations }) {
-  const { getAudio, data, status, error } = useAudio({ cloud_name: "testing-hooks-upload" });
+  const { generateUrl, url, status, error } = useAudio({ cloudName: "testing-hooks-upload" });
+
   React.useEffect(() => {
-    getAudio({
-      public_id: publicId,
-      transform_options: {
-        ...transformations
-      }
-    })
+    generateUrl({ publicId, transformations })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -19,14 +15,15 @@ function Audio({ publicId, transformations }) {
   return (
     <div>
       <audio controls>
-        <source src={data} type="audio/mp3" />
+        <source src={url} type="audio/mp3" />
       </audio>
     </div>
   )
 }
 
 function Image({ publicId, transformations }) {
-  const { generateUrl, url, status, error } = useImage({ cloud_name: "testing-hooks-upload" });
+  const { generateUrl, url, status, error } = useImage({ cloudName: "testing-hooks-upload" });
+
   React.useEffect(() => {
     generateUrl({ publicId, transformations })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -39,14 +36,9 @@ function Image({ publicId, transformations }) {
 }
 
 function Video({ publicId, transformations }) {
-  const { getVideo, data, status, error } = useVideo({ cloud_name: "testing-hooks-upload" })
+  const { generateUrl, url, status, error } = useVideo({ cloudName: "testing-hooks-upload" })
   React.useEffect(() => {
-    getVideo({
-      public_id: publicId,
-      transform_options: {
-        ...transformations
-      }
-    })
+    generateUrl({ publicId, transformations })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -55,27 +47,22 @@ function Video({ publicId, transformations }) {
 
   return (
     <video autoPlay controls>
-      <source src={data} />
+      <source src={url} />
     </video>
   )
 }
 
 function Gif({ publicId, transformations }) {
-  const { getGif, data, status, error } = useGif({ cloud_name: "testing-hooks-upload" })
+  const { generateUrl, url, status, error } = useGif({ cloudName: "testing-hooks-upload" })
   React.useEffect(() => {
-    getGif({
-      public_id: publicId,
-      transform_options: {
-        ...transformations
-      }
-    })
+    generateUrl({ publicId, transformations })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>{error.message}</p>;
 
-  return <img src={data} alt="gif from a video" />
+  return <img src={url} alt="gif from a video" />
 }
 
 const App = () => {
