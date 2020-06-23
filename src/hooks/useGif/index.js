@@ -10,16 +10,21 @@ export default function useGif({ cloudName }) {
     transformations: {}
   });
 
-  const { data: url, status, error } = useQuery(gifOptions && [`${gifOptions.publicId}-url`, gifOptions], async (key, gifOptions) => {
-    const gif = cld.video_url(`${gifOptions.publicId}.gif`, {
+  const { data: url, status, error } = useQuery(
+    [`${gifOptions.publicId}-url`, gifOptions],
+    async (key, gifOptions) => await cld.video_url(`${gifOptions.publicId}.gif`, {
       ...gifOptions.transformations,
       flags: "animated",
       effect: "loop",
-    })
-    return gif;
-  })
+    }),
+    { enabled: gifOptions }
+  )
 
   function generateUrl({ publicId, transformations }) {
+    if (!publicId) {
+      throw new Error("Must provide a public id of your asset")
+    }
+
     // Attach { crop: 'scale' } automatically when height or width options are supplied. This is to handle applying those transformations properly
     if (
       (transformations.hasOwnProperty('width') || transformations.hasOwnProperty('height'))

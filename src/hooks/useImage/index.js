@@ -14,12 +14,14 @@ export default function useImage({ cloudName } = {}) {
     transform_options: {}
   });
 
-  const { data: url, status, error } = useQuery(imageOptions && [`${imageOptions.public_id}-url`, imageOptions], async (key, imageOptions) => {
-    return await cld.url(imageOptions.publicId, { ...imageOptions.transformations });
-  })
+  const { data: url, status, error } = useQuery(
+    [`${imageOptions.public_id}-url`, imageOptions],
+    async (key, imageOptions) => await cld.url(imageOptions.publicId, { ...imageOptions.transformations }),
+    { enabled: imageOptions }
+  )
 
   function generateUrl({ publicId, transformations } = {}) {
-    if (!public_id) {
+    if (!publicId) {
       throw new Error("Must provide a public id of your asset")
     }
 

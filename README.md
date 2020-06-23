@@ -254,14 +254,11 @@ function Gif({ publicId, transformations, width, height, alt  }) {
 function Main() {
   return <Audio publicId="trees" />;
 }
-
-
 ```
 
 ## useUpload
 
 Example of a serverless function you'd create 
-(Guide coming soon 😅)
 ```js
 const cloudinary = require('cloudinary').v2;
 
@@ -295,6 +292,10 @@ function Upload({ endpoint }) {
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>{error.message}</p>;
+
+  let file;
+
+  let uploadOptions;
 
   return (
     <div>
@@ -348,7 +349,7 @@ export default function Images({ endpoint }) {
   return (
     <div>
       <button onClick={() => search({
-        expression: "resource_type:image"
+        resourceType: "image"
       })}>
         Load
       </button>

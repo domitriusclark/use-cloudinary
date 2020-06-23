@@ -10,14 +10,19 @@ export default function useAudio({ cloudName }) {
     transformations: {}
   });
 
-  const { data: url, status, error } = useQuery(audioOptions && [`${audioOptions.publicId}-url`, audioOptions], async (key, audioOptions) => {
-    const audio = cld.video_url(`${audioOptions.publicId}.mp3`, {
+  const { data: url, status, error } = useQuery(
+    [`${audioOptions.publicId}-url`, audioOptions],
+    async (key, audioOptions) => await cld.video_url(`${audioOptions.publicId}.mp3`, {
       ...audioOptions.transformations,
-    })
-    return audio;
-  })
+    }),
+    { enabled: audioOptions }
+  )
 
   function generateUrl({ publicId, transformations }) {
+    if (!publicId) {
+      throw new Error("Must provide a public id of your asset")
+    }
+
     return setAudioOptions({ publicId, transformations })
   }
 

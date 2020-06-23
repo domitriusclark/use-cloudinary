@@ -45,9 +45,7 @@ export default function useSearch({ endpoint } = {}) {
 
     if (searchConfig.hasOwnProperty('resourceType')) {
       if (expressionConfig.trim().length === 0) {
-        console.log("I'm running in resourceType")
         expressionConfig`resource_type:${searchConfig.resourceType}`
-
       } else {
         expressionConfig + ` AND resource_type:${searchConfig.resourceType}`
       }
@@ -63,7 +61,6 @@ export default function useSearch({ endpoint } = {}) {
 
     if (searchConfig.hasOwnProperty('tags')) {
       if (expressionConfig.trim().length === 0) {
-        console.log("I ran inside of tags")
         expressionConfig = `tags=${searchConfig.tags}`
       } else {
         expressionConfig + ` AND folder:${searchConfig.tags}`;

@@ -69,9 +69,9 @@ const App = () => {
   return (
     <div>
       <Audio publicId="game-sounds/switch" />
-      <Image publicId="6" transformations={{ height: 0.3 }} />
+      <Image publicId="test toasts" transformations={{ height: 0.3 }} />
       <Gif publicId="trees" transformations={{ height: 0.3 }} />
-      <Video publicId="gif test" transformations={{ height: 0.3 }} />
+      <Video publicId="trees" transformations={{ height: 0.3 }} />
     </div>
   )
 }
