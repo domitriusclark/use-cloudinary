@@ -1,3 +1,4 @@
+import React from 'react';
 import { useMutation } from 'react-query';
 import fetch from 'isomorphic-unfetch';
 
@@ -6,8 +7,9 @@ export default function useSearch({ endpoint } = {}) {
     throw new Error("Must provide an endpoint to search");
   }
 
-  const [search, { data, status, error }] = useMutation(async (searchConfig) => {
-    /*
+  let expressionConfig = "";
+
+  /*
       search by: 
         - public ID by name or by prefix --> folder/imagePublicId | publicId | (prefix search w/) publicId*
         - resource type --> can only be image or video (strictly)
@@ -19,47 +21,60 @@ export default function useSearch({ endpoint } = {}) {
       that we can send and place directly inside of our backend search query 
 
       --> search expects a structure like so `expression: 'resource_type:image AND tags="whatever tags you have"'
-     */
-    let expressionConfig = '';
-    if (searchConfig.hasOwnProperty('publicId')) {
-      if (expressionConfig.split.length === 0) {
-        return expressionConfig + `AND public_id=${publicId}`;
-      } else {
-        return `public_id=${publicId}`
-      }
 
+      you will now call search from the client structured like this --> needs at least one of the following, but can include all/multiple
+
+      search({
+        publicId: "your-public-id"
+        resourceType: "image || video"
+        folder: "test/sample"
+        tags: "tag1 tag2"
+        aspectRatio: "16:9"
+      })
+
+  */
+
+  const [search, { data, status, error }] = useMutation(async (searchConfig) => {
+    if (searchConfig.hasOwnProperty('publicId')) {
+      if (expressionConfig.trim().length === 0) {
+        expressionConfig = `public_id=${searchConfig.publicId}`
+      } else {
+        expressionConfig + ` AND public_id=${searchConfig.publicId}`;
+      }
     }
 
     if (searchConfig.hasOwnProperty('resourceType')) {
-      if (expressionConfig.split.length === 0) {
-        return expressionConfig + `AND resource_type:${resourceType}`;
+      if (expressionConfig.trim().length === 0) {
+        console.log("I'm running in resourceType")
+        expressionConfig`resource_type:${searchConfig.resourceType}`
+
       } else {
-        return `resource_type:${resourceType}`
+        expressionConfig + ` AND resource_type:${searchConfig.resourceType}`
       }
     }
 
-
-    if (searchConfig.hasoOwnProperty('folder')) {
-      if (expressionConfig.split.length === 0) {
-        return expressionConfig + `AND folder:${folder}`
+    if (searchConfig.hasOwnProperty('folder')) {
+      if (expressionConfig.trim().length === 0) {
+        expressionConfig = `folder:${searchConfig.folder}`
       } else {
-        return `folder:${folder}`
+        expressionConfig` AND folder:${searchConfig.folder}`;
       }
     }
 
     if (searchConfig.hasOwnProperty('tags')) {
-      if (expressionConfig.split.length === 0) {
-        return expressionConfig + `AND tags="${tags}"`;
+      if (expressionConfig.trim().length === 0) {
+        console.log("I ran inside of tags")
+        expressionConfig = `tags=${searchConfig.tags}`
       } else {
-        return `tags=${tags}`
+        expressionConfig + ` AND folder:${searchConfig.tags}`;
       }
     }
 
     if (searchConfig.hasOwnProperty('aspectRatio')) {
-      if (expressionConfig.split.length === 0) {
-        return expressionConfig + `AND aspect_ratio="${aspectRatio}"`;
+      if (expressionConfig.trim().length === 0) {
+        expressionConfig = `aspect_ratio="${searchConfig.aspectRatio}"`
       } else {
-        return `aspect_ratio="${aspectRatio}"`
+        expressionConfig + ` AND aspect_ratio="${searchConfig.aspectRatio}"`;
       }
     }
 
@@ -72,6 +87,7 @@ export default function useSearch({ endpoint } = {}) {
 
     return res.json();
   });
+
 
   return { search, data, status, error }
 } 

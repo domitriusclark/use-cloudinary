@@ -1,13 +1,13 @@
 import React from 'react'
 import { useImage, useVideo, useGif, useAudio } from 'use-cloudinary'
 
-function Audio({ publicId, transforms }) {
+function Audio({ publicId, transformations }) {
   const { getAudio, data, status, error } = useAudio({ cloud_name: "testing-hooks-upload" });
   React.useEffect(() => {
     getAudio({
       public_id: publicId,
       transform_options: {
-        ...transforms
+        ...transformations
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -38,13 +38,13 @@ function Image({ publicId, transformations }) {
   return <img src={url} alt="Transformed from Cloudinary" />
 }
 
-function Video({ publicId, transforms }) {
+function Video({ publicId, transformations }) {
   const { getVideo, data, status, error } = useVideo({ cloud_name: "testing-hooks-upload" })
   React.useEffect(() => {
     getVideo({
       public_id: publicId,
       transform_options: {
-        ...transforms
+        ...transformations
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,13 +60,13 @@ function Video({ publicId, transforms }) {
   )
 }
 
-function Gif({ publicId, transforms }) {
+function Gif({ publicId, transformations }) {
   const { getGif, data, status, error } = useGif({ cloud_name: "testing-hooks-upload" })
   React.useEffect(() => {
     getGif({
       public_id: publicId,
       transform_options: {
-        ...transforms
+        ...transformations
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,8 +83,8 @@ const App = () => {
     <div>
       <Audio publicId="game-sounds/switch" />
       <Image publicId="6" transformations={{ height: 0.3 }} />
-      <Gif publicId="trees" transforms={{ height: 0.3 }} />
-      <Video publicId="gif test" transforms={{ height: 0.3 }} />
+      <Gif publicId="trees" transformations={{ height: 0.3 }} />
+      <Video publicId="gif test" transformations={{ height: 0.3 }} />
     </div>
   )
 }
