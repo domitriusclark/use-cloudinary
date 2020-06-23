@@ -80,7 +80,7 @@ function Main() {
 ```jsx
 import { useVideo } from 'use-cloudinary'
 
-function Video({ publicId, transformations, width, height, alt }) {
+function Video({ publicId, transformations, width, height }) {
   const { generateUrl, url, status, error } = useImage({ cloudName: 'testing-hooks-upload' });
 
   React.useEffect(() => {
@@ -113,7 +113,7 @@ function Video({ publicId, transformations, width, height, alt }) {
   if (status === "error") return <p>{error.message}</p>
 
   return (
-    <video autoPlay controls>
+    <video stylle={{ height, width }} autoPlay controls>
       <source src={url} />
     </video>
   )
@@ -135,22 +135,58 @@ function Main() {
 ```jsx
 import { useGif } from 'use-cloudinary'
 
-function Gif({ cloudName, publicId, transforms }) {
-  const { getGif, data, status, error } = useGif({ cloud_name: cloudName })
-  
+function Gif({ publicId, transformations, width, height, alt  }) {
+  const { generateUrl, url, status, error } = useImage({ cloudName: 'testing-hooks-upload' });
+
   React.useEffect(() => {
-    getGif({
-      public_id: publicId, 
-      transform_options: {
-        ...transforms
+    // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your image url 
+    generateUrl({
+      publicId,
+      transformations: {
+        // by supplying height and width separately from the transformations object, 
+        // we can use the height and width to dictate the size of the element AND the transformations
+        height,
+        width,
+        // then we can spread the rest of the transformations in
+        ...transformations
+
+        /* 
+          you'll also be getting these automatically attached from internals
+
+          fetchFormat: 'auto',
+          quality: 'auto',
+          crop: 'scale'
+        */        
       }
-    })
-  }, [])
+    });
+  });
 
-  if (status === "loading") return <p>Loading...</p>;
-  if (status === "error") return <p>{error.message}</p>;
+  // status can either be "success", "loading", or "error"
+  if (status === 'loading') return <p>Loading...</p>;
 
-  return <img src={data} alt='gif from a video'/>
+  // we can check if the status of our request is an error, and surface that error to our UI
+  if (status === "error") return <p>{error.message}</p>
+
+   return (
+     <img 
+      src={data} 
+      alt='gif from a video'
+      style={{
+        height,
+        width
+      }}
+    />
+  )
+}
+
+function Main() {
+  return (
+    <Gif 
+      publicId="trees" 
+      height={300}
+      width={400}
+    />    
+  )
 }
 ```
 
@@ -182,6 +218,44 @@ function Audio({ cloudName, publicId, transforms }) {
     </div>
   )
 }
+
+function Gif({ publicId, transformations, width, height, alt  }) {
+  const { generateUrl, url, status, error } = useImage({ cloudName: 'testing-hooks-upload' });
+
+  React.useEffect(() => {
+    // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your image url 
+    generateUrl({
+      publicId,
+      transformations          
+      /* 
+        you'll also be getting these automatically attached from internals
+
+        fetchFormat: 'auto',
+        quality: 'auto',
+        crop: 'scale'
+      */        
+      }
+    });
+  });
+
+  // status can either be "success", "loading", or "error"
+  if (status === 'loading') return <p>Loading...</p>;
+
+  // we can check if the status of our request is an error, and surface that error to our UI
+  if (status === "error") return <p>{error.message}</p>
+
+  return (
+    <audio controls>
+      <source src={url} type="audio/mp3" />
+    </audio>
+  )
+}
+
+function Main() {
+  return <Audio publicId="trees" />;
+}
+
+
 ```
 
 ## useUpload
