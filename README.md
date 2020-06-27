@@ -84,7 +84,7 @@ function Video({ publicId, transformations, width, height }) {
   const { generateUrl, url, status, error } = useImage({ cloudName: 'testing-hooks-upload' });
 
   React.useEffect(() => {
-    // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your image url 
+    // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your video's url 
     generateUrl({
       publicId,
       transformations: {
@@ -170,7 +170,7 @@ function Gif({ publicId, transformations, width, height, alt  }) {
    return (
      <img 
       src={data} 
-      alt='gif from a video'
+      alt={alt}
       style={{
         height,
         width
@@ -219,22 +219,14 @@ function Audio({ cloudName, publicId, transforms }) {
   )
 }
 
-function Gif({ publicId, transformations, width, height, alt  }) {
+function Audio({ publicId, transformations }) {
   const { generateUrl, url, status, error } = useImage({ cloudName: 'testing-hooks-upload' });
 
   React.useEffect(() => {
     // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your image url 
     generateUrl({
       publicId,
-      transformations          
-      /* 
-        you'll also be getting these automatically attached from internals
-
-        fetchFormat: 'auto',
-        quality: 'auto',
-        crop: 'scale'
-      */        
-      }
+      transformations                 
     });
   });
 
@@ -252,7 +244,7 @@ function Gif({ publicId, transformations, width, height, alt  }) {
 }
 
 function Main() {
-  return <Audio publicId="trees" />;
+  return <Audio publicId="game-sounds/switch" />;
 }
 ```
 
@@ -293,9 +285,9 @@ function Upload({ endpoint }) {
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>{error.message}</p>;
 
-  let file;
+  let file; // this will be one of the many file types accepted by the Cloudinary SDK
 
-  let uploadOptions;
+  let uploadOptions; // any eager transformations or metadata can be fed through this variable
 
   return (
     <div>
@@ -340,17 +332,20 @@ exports.handler = async (event) => {
 import Image from './Image';
 import { useSearch } from 'use-cloudinary';
 
-// Here's an example of getting all the images in your account 
 export default function Images({ endpoint }) {
   const { search, data, status } = useSearch({ endpoint: endpoint });
 
   if (status === "loading") return <p>Loading...</p>;
 
+  // search will accept options such as resourceType, publicId, tags, folder, and aspectRatio 
+
   return (
     <div>
-      <button onClick={() => search({
-        resourceType: "image"
-      })}>
+
+      <button onClick={() => {
+        // this will return us all assets that are an image resource type
+        return search({ resourceType: "image"})
+      }}>
         Load
       </button>
       <div>
