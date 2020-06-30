@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useQuery } from 'react-query'
 import cloudinary from 'cloudinary-core'
 
-export default function useImage({ cloud_name } = {}) {
-  const cld = cloudinary.Cloudinary.new({ cloud_name }, { secure: true })
+export default function useImage({ cloudName } = {}) {
+  const cld = cloudinary.Cloudinary.new({ cloud_name: cloudName }, { secure: true })
 
-  if (!cloud_name) {
-    throw new Error("Must enter a cloud name")
+  if (!cloudName) {
+    throw new Error("Please enter a valid cloud name")
   }
 
   const [imageOptions, setImageOptions] = React.useState({
@@ -14,28 +14,36 @@ export default function useImage({ cloud_name } = {}) {
     transform_options: {}
   });
 
-  const { data, status, error } = useQuery(imageOptions && [`${imageOptions.public_id}-url`, imageOptions], async (key, imageOptions) => {
-    const image = await cld.url(imageOptions.public_id, {
-      ...imageOptions.transform_options
-    });
+  const { data: url, status, error } = useQuery(
+    [`${imageOptions.public_id}-url`, imageOptions],
+    async (key, imageOptions) => await cld.url(imageOptions.publicId, { ...imageOptions.transformations }),
+    { enabled: imageOptions }
+  )
 
-    return image
-  })
-
-  function getImage({ public_id, transform_options } = {}) {
-    if (!public_id) {
+  function generateUrl({ publicId, transformations } = {}) {
+    if (!publicId) {
       throw new Error("Must provide a public id of your asset")
     }
+
+    // Attach { crop: 'scale' } automatically when height or width options are supplied. This is to handle applying those transformations properly
     if (
-      (transform_options.hasOwnProperty('width') || transform_options.hasOwnProperty('height'))
-      && !transform_options.hasOwnProperty('crop')) {
-        transform_options.crop = 'scale';
+      (transformations.hasOwnProperty('width') || transformations.hasOwnProperty('height'))
+      && !transformations.hasOwnProperty('crop')) {
+      transformations.crop = 'scale';
     }
-    if (!transform_options.hasOwnProperty('fetchFormat')) {
-        transform_options.fetchFormat = 'auto';
+
+    // Attach { fetchFormat: 'auto' } automatically when no config is supplied. This will deliver the best image format automatically depending on your browser
+    if (!transformations.hasOwnProperty('fetchFormat')) {
+      transformations.fetchFormat = 'auto';
     }
-    return setImageOptions({ public_id, transform_options });
+
+    // Attach { quality: 'auto' } automatically when no config is supplied
+    if (!transformations.hasOwnProperty('quality')) {
+      transformations.quality = 'auto';
+    }
+
+    return setImageOptions({ publicId, transformations });
   }
 
-  return { getImage, data, status, error }
+  return { generateUrl, url, status, error }
 }

@@ -1,4 +1,3 @@
-import { Server } from 'miragejs'
 import { renderHook } from '@testing-library/react-hooks';
 
 import { useUpload } from '../../index';
