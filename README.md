@@ -261,14 +261,7 @@ cloudinary.config({
 })
 
 exports.handler = (event) => {
-  const { public_id, file, tags, eager, type = 'auto', size } = JSON.parse(event.body);
-
-  const res = await cloudinary.uploader.upload(file, {
-    public_id,
-    resource_type: type,
-    tags,
-    eager
-  })
+  const res = await cloudinary.uploader.upload(file, { ...JSON.parse(event.body)})
 
   return {
     statusCode: 200,
@@ -279,15 +272,11 @@ exports.handler = (event) => {
 ```jsx
 import { useUpload } from 'use-cloudinary'
 
-function Upload({ endpoint }) {
-  const { upload, data, status } = useUpload({ endpoint });
+function SignedUpload({ file, uploadOptions }) {
+  const {upload, data, status, error } = useUpload({ endpoint: "/your/endpoint" });
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>{error.message}</p>;
-
-  let file; // this will be one of the many file types accepted by the Cloudinary SDK
-
-  let uploadOptions; // any eager transformations or metadata can be fed through this variable
 
   return (
     <div>
@@ -296,6 +285,30 @@ function Upload({ endpoint }) {
         upload({
           file,
           uploadOptions 
+        });
+      }} />
+      {data && <img src={data.url} />}
+    </div>
+  )
+}
+
+function UnsignedUpload({ file, uploadOptions }) {
+  const {upload, data, status, error } = useUpload({ endpoint: "/your/endpoint" });
+
+  if (status === "loading") return <p>Loading...</p>;
+  if (status === "error") return <p>{error.message}</p>;
+
+  return (
+    <div>
+      <input type="file" onChange={() => {
+        // ...stuff to make sure your media is ready to upload 
+        upload({
+          file,
+          // Unsigned uploads only allow for specific options outside of your upload preset
+          uploadOptions,
+          // the only difference for unsigned uploads are these two keys. these will inform a backend function on which function from the SDK to use
+          unsigned: "true",
+          uploadPreset: "upload-preset-1"
         });
       }} />
       {data && <img src={data.url} />}
