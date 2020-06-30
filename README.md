@@ -84,7 +84,7 @@ function Video({ publicId, transformations, width, height }) {
   const { generateUrl, url, status, error } = useImage({ cloudName: 'testing-hooks-upload' });
 
   React.useEffect(() => {
-    // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your video's url 
+    // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your video url 
     generateUrl({
       publicId,
       transformations: {
@@ -139,7 +139,7 @@ function Gif({ publicId, transformations, width, height, alt  }) {
   const { generateUrl, url, status, error } = useImage({ cloudName: 'testing-hooks-upload' });
 
   React.useEffect(() => {
-    // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your image url 
+    // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your gif url 
     generateUrl({
       publicId,
       transformations: {
@@ -195,35 +195,11 @@ function Main() {
 ```jsx
 import { useAudio } from 'use-cloudinary';
 
-function Audio({ cloudName, publicId, transforms }) {
-  const { getAudio, data, status, error } = useAudio({ cloud_name: cloudName });
-  
-  React.useEffect(() => {
-    getAudio({
-      public_id: publicId,
-      transform_options: {
-        ...transforms
-      }
-    })
-  }, [])
-
-  if (status === "loading") return <p>Loading...</p>;
-  if (status === "error") return <p>{error.message}</p>;
-
-  return (
-    <div>
-      <audio controls>
-        <source src={data} type="audio/mp3" />
-      </audio>
-    </div>
-  )
-}
-
 function Audio({ publicId, transformations }) {
   const { generateUrl, url, status, error } = useImage({ cloudName: 'testing-hooks-upload' });
 
   React.useEffect(() => {
-    // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your image url 
+    // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your audio url 
     generateUrl({
       publicId,
       transformations                 
