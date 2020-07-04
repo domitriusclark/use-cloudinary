@@ -83,7 +83,7 @@ export default function useSearch({ endpoint } = {}) {
 
 
     // this will allow you to pass in your own configured search expression for granular control
-    if (expressionsConfig.trim().length === 0) {
+    if (expressionConfig.trim().length === 0) {
       expressionConfig = searchConfig
     }
 
