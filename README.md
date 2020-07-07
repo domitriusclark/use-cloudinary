@@ -43,7 +43,7 @@ function Image({ publicId, transformations, width, height, alt }) {
         
       }
     });
-  });
+  }, [publicId, height, width, transformations]);
 
   // status can either be "success", "loading", or "error"
   if (status === 'loading') return <p>Loading...</p>;
