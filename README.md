@@ -18,8 +18,8 @@ npm install --save use-cloudinary
 import { useImage } from 'use-cloudinary';
 
 
-function Image({ publicId, transformations, width, height, alt }) {
-  const { generateUrl, url, isLoading, isError, isIdle, error } = useImage({ cloudName: 'testing-hooks-upload' });
+function Image({ publicId, transformations, width, height, cloudName alt }) {
+  const { generateUrl, url, isLoading, isError, error } = useImage({ cloudName });
 
   React.useEffect(() => {
     // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your image url 
@@ -46,16 +46,15 @@ function Image({ publicId, transformations, width, height, alt }) {
     });
   }, [publicId, height, width, transformations]);
 
-  if (isIdle || isLoading) return <p>Loading...</p>;
-
+  if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>{error.message}</p>
 
   return (
     <img
       // we also have changed `data` to `url` to better describe what `generateUrl` gives us back and makes more sense to pass to `src`
-      styles={{
-        width,
-        height
+      style={{ 
+        height: `${height}px`, 
+        width: `${width}px` 
       }}
       src={url}
       alt={alt}
@@ -64,7 +63,7 @@ function Image({ publicId, transformations, width, height, alt }) {
 }
 
 // If you're delivering a bunch of Images on a view, the hooks also supports lazy-loading out of the box 🤯
-function LazyLoadedImage({ publicId, transformations, width, height, cloudName }) {
+function LazyLoadedImage({ publicId, transformations, width, height, cloudName, alt }) {
   const {
     generateUrl,
     blurredPlaceholderUrl,
@@ -86,7 +85,7 @@ function LazyLoadedImage({ publicId, transformations, width, height, cloudName }
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [publicId, height, width, transformations])
 
   if (isError) return <p>{error.message}</p>;
 
@@ -119,6 +118,15 @@ function Main() {
       publicId="test toasts"
       height={1200}
       width={600}
+      cloudName="testing-hooks-upload"
+      alt="Not lazy-loaded"
+    />
+    <LazyLoadedImage 
+      publicId="test toasts"
+      height={300}
+      width={300}
+      cloudName="testing-hooks-upload"
+      alt="Lazy-loaded"
     />
   )
 }
@@ -153,13 +161,13 @@ function Video({ publicId, transformations, width, height }) {
         */        
       }
     });
-  });
+  }, [publicId, height, width, transformations]);
   
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>{error.message}</p>
 
   return (
-    <video style={{ height, width }} autoPlay controls>
+    <video style={{ height: `${height}px`, width: `${width}px` }} autoPlay controls>
       <source src={url} />
     </video>
   )
@@ -205,7 +213,7 @@ function Gif({ publicId, transformations, width, height, alt  }) {
         */        
       }
     });
-  });
+  }, [publicId, height, width, transformations]);
 
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>{error.message}</p>
@@ -214,9 +222,9 @@ function Gif({ publicId, transformations, width, height, alt  }) {
      <img 
       src={data} 
       alt={alt}
-      style={{
-        height,
-        width
+      style={{ 
+        height: `${height}px`, 
+        width: `${width}px` 
       }}
     />
   )
@@ -228,6 +236,7 @@ function Main() {
       publicId="trees" 
       height={300}
       width={400}
+      alt="From video to Gif"
     />    
   )
 }
@@ -247,7 +256,7 @@ function Audio({ publicId, transformations }) {
       publicId,
       transformations                 
     });
-  });
+  }, [publicId, transformations]);
 
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>{error.message}</p>
@@ -386,6 +395,7 @@ export default function Images({ endpoint }) {
                 height: 0.2, 
                 border: "2px_solid_black" 
               }} 
+              cloudName="testing-hooks-upload"
             />
           )}
       </div>
