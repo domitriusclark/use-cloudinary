@@ -44,7 +44,7 @@ function Image({ publicId, transformations, width, height, alt }) {
         
       }
     });
-  });
+  }, [publicId, height, width, transformations]);
 
   if (isIdle || isLoading) return <p>Loading...</p>;
 
