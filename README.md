@@ -17,8 +17,9 @@ npm install --save use-cloudinary
 ```jsx
 import { useImage } from 'use-cloudinary';
 
+
 function Image({ publicId, transformations, width, height, alt }) {
-  const { generateUrl, url, status, error } = useImage({ cloudName: 'testing-hooks-upload' });
+  const { generateUrl, url, isLoading, isError, isIdle, error } = useImage({ cloudName: 'testing-hooks-upload' });
 
   React.useEffect(() => {
     // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your image url 
@@ -45,11 +46,9 @@ function Image({ publicId, transformations, width, height, alt }) {
     });
   });
 
-  // status can either be "success", "loading", or "error"
-  if (status === 'loading') return <p>Loading...</p>;
+  if (isIdle || isLoading) return <p>Loading...</p>;
 
-  // we can check if the status of our request is an error, and surface that error to our UI
-  if (status === "error") return <p>{error.message}</p>
+  if (isError) return <p>{error.message}</p>
 
   return (
     <img
@@ -61,6 +60,56 @@ function Image({ publicId, transformations, width, height, alt }) {
       src={url}
       alt={alt}
     />
+  )
+}
+
+// If you're delivering a bunch of Images on a view, the hooks also supports lazy-loading out of the box 🤯
+function LazyLoadedImage({ publicId, transformations, width, height, cloudName }) {
+  const {
+    generateUrl,
+    blurredPlaceholderUrl,
+    url,
+    isError,
+    error,
+    ref,
+    supportsLazyLoading,
+    inView
+  } = useImage({ cloudName });
+
+  React.useEffect(() => {
+    generateUrl({
+      publicId,
+      transformations: {
+        width,
+        height,
+        ...transformations
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  if (isError) return <p>{error.message}</p>;
+
+  return (
+    <div
+      ref={!supportsLazyLoading ? ref : undefined}
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+        background: `no-repeat url(${blurredPlaceholderUrl(publicId, width, height)})`
+      }}>
+      {inView || supportsLazyLoading ? (
+        <img
+          src={url}
+          loading="lazy"
+          style={{
+            width: `${width}px`,
+            height: `${height}px`,
+          }}
+          alt="Lazy loaded"
+        />
+      ) : null}
+    </div>
   )
 }
 
@@ -81,7 +130,7 @@ function Main() {
 import { useVideo } from 'use-cloudinary'
 
 function Video({ publicId, transformations, width, height }) {
-  const { generateUrl, url, status, error } = useImage({ cloudName: 'testing-hooks-upload' });
+  const { generateUrl, url, isLoading, isError, error } = useImage({ cloudName: 'testing-hooks-upload' });
 
   React.useEffect(() => {
     // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your video url 
@@ -105,15 +154,12 @@ function Video({ publicId, transformations, width, height }) {
       }
     });
   });
-
-  // status can either be "success", "loading", or "error"
-  if (status === 'loading') return <p>Loading...</p>;
-
-  // we can check if the status of our request is an error, and surface that error to our UI
-  if (status === "error") return <p>{error.message}</p>
+  
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>{error.message}</p>
 
   return (
-    <video stylle={{ height, width }} autoPlay controls>
+    <video style={{ height, width }} autoPlay controls>
       <source src={url} />
     </video>
   )
@@ -136,7 +182,7 @@ function Main() {
 import { useGif } from 'use-cloudinary'
 
 function Gif({ publicId, transformations, width, height, alt  }) {
-  const { generateUrl, url, status, error } = useImage({ cloudName: 'testing-hooks-upload' });
+  const { generateUrl, url, isLoading, isError, error } = useImage({ cloudName: 'testing-hooks-upload' });
 
   React.useEffect(() => {
     // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your gif url 
@@ -161,11 +207,8 @@ function Gif({ publicId, transformations, width, height, alt  }) {
     });
   });
 
-  // status can either be "success", "loading", or "error"
-  if (status === 'loading') return <p>Loading...</p>;
-
-  // we can check if the status of our request is an error, and surface that error to our UI
-  if (status === "error") return <p>{error.message}</p>
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>{error.message}</p>
 
    return (
      <img 
@@ -196,7 +239,7 @@ function Main() {
 import { useAudio } from 'use-cloudinary';
 
 function Audio({ publicId, transformations }) {
-  const { generateUrl, url, status, error } = useImage({ cloudName: 'testing-hooks-upload' });
+  const { generateUrl, url, isLoading, isError, error } = useImage({ cloudName: 'testing-hooks-upload' });
 
   React.useEffect(() => {
     // the `generateUrl` function will hook internally to the SDK and do a lot of the heavy lifting for generating your audio url 
@@ -206,11 +249,8 @@ function Audio({ publicId, transformations }) {
     });
   });
 
-  // status can either be "success", "loading", or "error"
-  if (status === 'loading') return <p>Loading...</p>;
-
-  // we can check if the status of our request is an error, and surface that error to our UI
-  if (status === "error") return <p>{error.message}</p>
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>{error.message}</p>
 
   return (
     <audio controls>
@@ -249,10 +289,10 @@ exports.handler = (event) => {
 import { useUpload } from 'use-cloudinary'
 
 function SignedUpload({ file, uploadOptions }) {
-  const {upload, data, status, error } = useUpload({ endpoint: "/your/endpoint" });
+  const {upload, data, isLoading, isError, error } = useUpload({ endpoint: "/your/endpoint" });
 
-  if (status === "loading") return <p>Loading...</p>;
-  if (status === "error") return <p>{error.message}</p>;
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>{error.message}</p>;
 
   return (
     <div>
@@ -269,10 +309,10 @@ function SignedUpload({ file, uploadOptions }) {
 }
 
 function UnsignedUpload({ file, uploadOptions }) {
-  const {upload, data, status, error } = useUpload({ endpoint: "/your/endpoint" });
+  const {upload, data, isLoading, isError, error } = useUpload({ endpoint: "/your/endpoint" });
 
-  if (status === "loading") return <p>Loading...</p>;
-  if (status === "error") return <p>{error.message}</p>;
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>{error.message}</p>;
 
   return (
     <div>
@@ -322,16 +362,16 @@ import Image from './Image';
 import { useSearch } from 'use-cloudinary';
 
 export default function Images({ endpoint }) {
-  const { search, data, status } = useSearch({ endpoint: endpoint });
+  const { search, data, isLoading, isError, error } = useSearch({ endpoint: endpoint });
 
-  if (status === "loading") return <p>Loading...</p>;
-
-  // search will accept options such as resourceType, publicId, tags, folder, and aspectRatio 
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>{error.message}</p>
 
   return (
     <div>
 
       <button onClick={() => {
+        // search will accept options such as resourceType, publicId, tags, folder, and aspectRatio 
         // this will return us all assets that are an image resource type
         return search({ resourceType: "image"})
       }}>

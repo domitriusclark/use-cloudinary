@@ -2,15 +2,15 @@ import React from 'react'
 import { useImage, useVideo, useGif, useAudio } from 'use-cloudinary'
 
 function Audio({ publicId, transformations }) {
-  const { generateUrl, url, status, error } = useAudio({ cloudName: "testing-hooks-upload" });
+  const { generateUrl, url, isLoading, isError, isIdle, error } = useAudio({ cloudName: "testing-hooks-upload" });
 
   React.useEffect(() => {
     generateUrl({ publicId, transformations })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [publicId])
 
-  if (status === "loading") return <p>Loading...</p>;
-  if (status === "error") return <p>{error.message}</p>;
+  if (isIdle || isLoading) return <p>Loading...</p>;
+  if (isError) return <p>{error.message}</p>;
 
   return (
     <div>
@@ -21,29 +21,64 @@ function Audio({ publicId, transformations }) {
   )
 }
 
-function Image({ publicId, transformations }) {
-  const { generateUrl, url, status, error } = useImage({ cloudName: "testing-hooks-upload" });
+function Image({ publicId, transformations, width, height, cloudName }) {
+  const {
+    generateUrl,
+    blurredPlaceholderUrl,
+    url,
+    isError,
+    error,
+    ref,
+    supportsLazyLoading,
+    inView
+  } = useImage({ cloudName });
 
   React.useEffect(() => {
-    generateUrl({ publicId, transformations })
+    generateUrl({
+      publicId,
+      transformations: {
+        width,
+        height,
+        ...transformations
+      }
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  if (status === "loading") return <p>Loading...</p>;
-  if (status === "error") return <p>{error.message}</p>;
+  if (isError) return <p>{error.message}</p>;
 
-  return <img src={url} alt="Transformed from Cloudinary" />
+  return (
+    <div
+      ref={!supportsLazyLoading ? ref : undefined}
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+        background: `no-repeat url(${blurredPlaceholderUrl(publicId, width, height)})`
+      }}>
+      {inView || supportsLazyLoading ? (
+        <img
+          src={url}
+          loading="lazy"
+          style={{
+            width: `${width}px`,
+            height: `${height}px`,
+          }}
+          alt="Lazy loaded"
+        />
+      ) : null}
+    </div>
+  )
 }
 
 function Video({ publicId, transformations }) {
-  const { generateUrl, url, status, error } = useVideo({ cloudName: "testing-hooks-upload" })
+  const { generateUrl, url, isLoading, isError, error } = useVideo({ cloudName: "testing-hooks-upload" })
   React.useEffect(() => {
     generateUrl({ publicId, transformations })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  if (status === "loading") return <p>Loading...</p>;
-  if (status === "error") return <p>{error.message}</p>;
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>{error.message}</p>;
 
   return (
     <video autoPlay controls>
@@ -67,9 +102,9 @@ function Gif({ publicId, transformations }) {
 
 const App = () => {
   return (
-    <div>
-      <Audio publicId="game-sounds/switch" />
-      <Image publicId="test toasts" transformations={{ height: 0.3 }} />
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <Audio cloudName="testing-hooks-upload" publicId="game-sounds/switch" />
+      <Image cloudName="testing-hooks-upload" publicId="test toasts" width="500" height="500" />
       <Gif publicId="trees" transformations={{ height: 0.3 }} />
       <Video publicId="trees" transformations={{ height: 0.3 }} />
     </div>

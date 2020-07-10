@@ -36,7 +36,7 @@ export default function useSearch({ endpoint } = {}) {
       search({ expression: "public_id=your-public-id AND aspect_ratio:16:9" })
   */
 
-  const [search, { data, status, error }] = useMutation(async (searchConfig) => {
+  const [search, { data, isLoading, isError, isIdle, isSuccess, error }] = useMutation(async (searchConfig) => {
     /* 
       The below searchConfig checks will allow you to use an opinionated (and growing) search w/ object configuration
       If you want to make more granular search decisions, pass the `expression` key and provide the typical Cloudinary search expression string
@@ -98,5 +98,5 @@ export default function useSearch({ endpoint } = {}) {
   });
 
 
-  return { search, data, status, error }
+  return { search, data, isLoading, isError, isIdle, isSuccess, error }
 } 

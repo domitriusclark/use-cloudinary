@@ -6,7 +6,7 @@ export default function useUpload({ endpoint } = {}, type = "signed") {
     throw new Error("Must provide an endpoint to upload")
   }
 
-  const [upload, { data, status, error }] = useMutation(async ({ file, uploadOptions }) => {
+  const [upload, { data, isIdle, isSuccess, isLoading, isError, error }] = useMutation(async ({ file, uploadOptions }) => {
     const res = await fetch(endpoint, {
       method: 'POST',
       body: JSON.stringify({
@@ -22,5 +22,5 @@ export default function useUpload({ endpoint } = {}, type = "signed") {
     return res.json()
   });
 
-  return { upload, data, status, error }
+  return { upload, data, isIdle, isSuccess, isLoading, isError, error }
 }

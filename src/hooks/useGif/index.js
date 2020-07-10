@@ -10,7 +10,7 @@ export default function useGif({ cloudName }) {
     transformations: {}
   });
 
-  const { data: url, status, error } = useQuery(
+  const { data: url, isLoading, isError, isSuccess, isIdle, error } = useQuery(
     [`${gifOptions.publicId}-url`, gifOptions],
     async (key, gifOptions) => await cld.video_url(`${gifOptions.publicId}.gif`, {
       ...gifOptions.transformations,
@@ -40,6 +40,6 @@ export default function useGif({ cloudName }) {
     return setGifOptions({ publicId, transformations })
   }
 
-  return { generateUrl, url, status, error }
+  return { generateUrl, url, isLoading, isError, isIdle, isSuccess, error }
 
 }

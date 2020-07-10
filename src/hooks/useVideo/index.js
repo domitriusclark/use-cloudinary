@@ -14,7 +14,7 @@ export default function useVideo({ cloudName }) {
     transformations: {}
   });
 
-  const { data: url, status, error } = useQuery(
+  const { data: url, isIdle, isSuccess, isLoading, isError, error } = useQuery(
     [`${videoOptions.publicId}-url`, videoOptions],
     async (key, videoOptions) => await cld.video_url(videoOptions.publicId, { ...videoOptions.transformations }),
     { enabled: videoOptions }
@@ -45,6 +45,6 @@ export default function useVideo({ cloudName }) {
     return setVideoOptions({ publicId, transformations });
   }
 
-  return { generateUrl, url, status, error }
+  return { generateUrl, url, isIdle, isSuccess, isLoading, isError, error }
 
 }

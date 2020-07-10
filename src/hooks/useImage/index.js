@@ -1,12 +1,22 @@
 import * as React from 'react';
 import { useQuery } from 'react-query'
 import cloudinary from 'cloudinary-core'
+import { useInView } from 'react-intersection-observer';
+import useNativeLazyLoading from '@charlietango/use-native-lazy-loading';
 
 export default function useImage({ cloudName } = {}) {
   const cld = cloudinary.Cloudinary.new({ cloud_name: cloudName }, { secure: true })
+  const supportsLazyLoading = useNativeLazyLoading();
+  const [ref, inView] = useInView({
+    triggerOnce: true
+  })
 
   if (!cloudName) {
     throw new Error("Please enter a valid cloud name")
+  }
+
+  function blurredPlaceholderUrl(publicId, width, height) {
+    return `https://res.cloudinary.com/${cloudName}/image/upload/w_${width}/e_blur:1000,q_1,f_auto/h_${height}/${publicId}.jpg`;
   }
 
   const [imageOptions, setImageOptions] = React.useState({
@@ -14,7 +24,7 @@ export default function useImage({ cloudName } = {}) {
     transform_options: {}
   });
 
-  const { data: url, status, error } = useQuery(
+  const { data: url, isLoading, isError, isIdle, isSuccess, error } = useQuery(
     [`${imageOptions.public_id}-url`, imageOptions],
     async (key, imageOptions) => await cld.url(imageOptions.publicId, { ...imageOptions.transformations }),
     { enabled: imageOptions }
@@ -26,9 +36,7 @@ export default function useImage({ cloudName } = {}) {
     }
 
     // Attach { crop: 'scale' } automatically when height or width options are supplied. This is to handle applying those transformations properly
-    if (
-      (transformations.hasOwnProperty('width') || transformations.hasOwnProperty('height'))
-      && !transformations.hasOwnProperty('crop')) {
+    if (transformations.hasOwnProperty('width') || transformations.hasOwnProperty('height') && !transformations.hasOwnProperty('crop')) {
       transformations.crop = 'scale';
     }
 
@@ -45,5 +53,17 @@ export default function useImage({ cloudName } = {}) {
     return setImageOptions({ publicId, transformations });
   }
 
-  return { generateUrl, url, status, error }
+  return {
+    generateUrl,
+    blurredPlaceholderUrl,
+    url,
+    isLoading,
+    isError,
+    isIdle,
+    isSuccess,
+    error,
+    ref,
+    inView,
+    supportsLazyLoading
+  }
 }

@@ -10,7 +10,7 @@ export default function useAudio({ cloudName }) {
     transformations: {}
   });
 
-  const { data: url, status, error } = useQuery(
+  const { data: url, isLoading, isError, isSuccess, isIdle, error } = useQuery(
     [`${audioOptions.publicId}-url`, audioOptions],
     async (key, audioOptions) => await cld.video_url(`${audioOptions.publicId}.mp3`, {
       ...audioOptions.transformations,
@@ -26,6 +26,6 @@ export default function useAudio({ cloudName }) {
     return setAudioOptions({ publicId, transformations })
   }
 
-  return { generateUrl, url, status, error }
+  return { generateUrl, url, isLoading, isError, isSuccess, isIdle, error }
 
 }
