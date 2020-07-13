@@ -1,5 +1,5 @@
 import React from 'react'
-import { useImage, useVideo, useGif, useAudio } from 'use-cloudinary'
+import { useImage, useVideo, useGif, useAudio, useCloudinary } from 'use-cloudinary'
 
 function Audio({ publicId, transformations }) {
   const { generateUrl, url, isLoading, isError, isIdle, error } = useAudio({ cloudName: "testing-hooks-upload" });
@@ -21,7 +21,7 @@ function Audio({ publicId, transformations }) {
   )
 }
 
-function Image({ publicId, transformations, width, height, cloudName }) {
+function Image({ publicId, transformations, width = "auto", height, cloudName }) {
   const {
     generateUrl,
     blurredPlaceholderUrl,
@@ -33,6 +33,8 @@ function Image({ publicId, transformations, width, height, cloudName }) {
     inView
   } = useImage({ cloudName });
 
+  const { cld } = useCloudinary({ cloudName });
+
   React.useEffect(() => {
     generateUrl({
       publicId,
@@ -43,26 +45,25 @@ function Image({ publicId, transformations, width, height, cloudName }) {
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [publicId.transformations]);
 
   if (isError) return <p>{error.message}</p>;
+
+  cld.responsive();
 
   return (
     <div
       ref={!supportsLazyLoading ? ref : undefined}
       style={{
-        width: `${width}px`,
+        width: '100%',
         height: `${height}px`,
-        background: `no-repeat url(${blurredPlaceholderUrl(publicId, width, height)})`
+        background: `no-repeat url(${blurredPlaceholderUrl({ publicId, width, height })})`,
       }}>
       {inView || supportsLazyLoading ? (
         <img
-          src={url}
+          className="cld-responsive"
+          data-src={url}
           loading="lazy"
-          style={{
-            width: `${width}px`,
-            height: `${height}px`,
-          }}
           alt="Lazy loaded"
         />
       ) : null}
@@ -103,8 +104,11 @@ function Gif({ publicId, transformations }) {
 const App = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Audio cloudName="testing-hooks-upload" publicId="game-sounds/switch" />
-      <Image cloudName="testing-hooks-upload" publicId="test toasts" width="500" height="500" />
+      <Audio cloudName="testing-hooks-upload" publicId="game-sounds/switch" transformations={{ responsive: "true", dpr: "auto" }} />
+      <Image cloudName="testing-hooks-upload" publicId="test toasts" transformations={{ responsive: "true", dpr: "auto" }} />
+      <Image cloudName="testing-hooks-upload" publicId="test toasts" width="500" height="500" transformations={{ responsive: "true", dpr: "auto" }} />
+      <Image cloudName="testing-hooks-upload" publicId="anime-commission-1" transformations={{ responsive: "true", dpr: "auto" }} />
+      <Image cloudName="testing-hooks-upload" publicId="og-image_1_c2xx6n" width="500" height="500" transformations={{ responsive: "true", dpr: "auto" }} />
       <Gif publicId="trees" transformations={{ height: 0.3 }} />
       <Video publicId="trees" transformations={{ height: 0.3 }} />
     </div>
