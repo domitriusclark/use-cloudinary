@@ -16,12 +16,12 @@ export default function useImage({ cloudName } = {}) {
   }
 
   function blurredPlaceholderUrl({ publicId, width, height }) {
-    if (!width) {
-      return `https://res.cloudinary.com/${cloudName}/image/upload/c_scale,e_blur:1000,q_1,f_auto/h_${height}/${publicId}.jpg`;
+    if (!width && !height) {
+      return `https://res.cloudinary.com/${cloudName}/image/upload/e_blur:1000,q_1,f_auto/${publicId}.jpg`;
     } else if (!height) {
       return `https://res.cloudinary.com/${cloudName}/image/upload/c_scale,w_${width}/e_blur:1000,q_1,f_auto/${publicId}.jpg`;
-    } else if (!width & !height) {
-      return `https://res.cloudinary.com/${cloudName}/image/upload/e_blur:1000,q_1,f_auto/${publicId}.jpg`;
+    } else if (!width) {
+      return `https://res.cloudinary.com/${cloudName}/image/upload/c_scale,e_blur:1000,q_1,f_auto/h_${height}/${publicId}.jpg`;
     } else {
       return `https://res.cloudinary.com/${cloudName}/image/upload/w_${width}/c_scale,e_blur:1000,q_1,f_auto/h_${height}/${publicId}.jpg`;
     }

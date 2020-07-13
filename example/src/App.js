@@ -45,7 +45,7 @@ function Image({ publicId, transformations, width = "auto", height, cloudName })
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [publicId.transformations]);
+  }, [publicId, transformations]);
 
   if (isError) return <p>{error.message}</p>;
 
