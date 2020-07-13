@@ -16,7 +16,15 @@ export default function useImage({ cloudName } = {}) {
   }
 
   function blurredPlaceholderUrl(publicId, width, height) {
-    return `https://res.cloudinary.com/${cloudName}/image/upload/w_${width}/e_blur:1000,q_1,f_auto/h_${height}/${publicId}.jpg`;
+    if (!width) {
+      return `https://res.cloudinary.com/${cloudName}/image/upload/e_blur:1000,q_1,f_auto/h_${height}/${publicId}.jpg`;
+    } else if (!height) {
+      return `https://res.cloudinary.com/${cloudName}/image/upload/w_${width}/e_blur:1000,q_1,f_auto/${publicId}.jpg`;
+    } else if (!height && !width) {
+      return `https://res.cloudinary.com/${cloudName}/image/upload/e_blur:1000,q_1,f_auto/${publicId}.jpg`;
+    } else {
+      return `https://res.cloudinary.com/${cloudName}/image/upload/w_${width}/e_blur:1000,q_1,f_auto/h_${height}/${publicId}.jpg`;
+    }
   }
 
   const [imageOptions, setImageOptions] = React.useState({
