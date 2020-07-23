@@ -21,19 +21,16 @@ export default function useImage({ cloudName } = {}) {
     } else if (!height) {
       return `https://res.cloudinary.com/${cloudName}/image/upload/c_scale,w_${width}/e_blur:1000,q_1,f_auto/${publicId}.jpg`;
     } else if (!width) {
-      return `https://res.cloudinary.com/${cloudName}/image/upload/c_scale,e_blur:1000,q_1,f_auto/h_${height}/${publicId}.jpg`;
+      return `https://res.cloudinary.com/${cloudName}/image/upload/e_blur:1000,q_1,f_auto/c_scale,h_${height}/${publicId}.jpg`;
     } else {
-      return `https://res.cloudinary.com/${cloudName}/image/upload/w_${width}/c_scale,e_blur:1000,q_1,f_auto/h_${height}/${publicId}.jpg`;
+      return `https://res.cloudinary.com/${cloudName}/image/upload/c_scale,w_${width}/e_blur:1000,q_1,f_auto/h_${height}/${publicId}.jpg`;
     }
   }
 
-  const [imageOptions, setImageOptions] = React.useState({
-    public_id: '',
-    transform_options: {}
-  });
+  const [imageOptions, setImageOptions] = React.useState();
 
   const { data: url, isLoading, isError, isIdle, isSuccess, error } = useQuery(
-    [`${imageOptions.public_id}-url`, imageOptions],
+    [`${imageOptions && imageOptions.publicId}-url`, imageOptions],
     async (key, imageOptions) => await cld.url(imageOptions.publicId, { ...imageOptions.transformations }),
     { enabled: imageOptions }
   )

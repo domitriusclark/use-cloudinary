@@ -33,7 +33,7 @@ function Image({ publicId, transformations, width = "auto", height, cloudName })
     inView
   } = useImage({ cloudName });
 
-  const { cld } = useCloudinary({ cloudName });
+  const { cld } = useCloudinary({ cloudName, placholder: true });
 
   React.useEffect(() => {
     generateUrl({
@@ -106,9 +106,6 @@ const App = () => {
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Audio cloudName="testing-hooks-upload" publicId="game-sounds/switch" transformations={{ responsive: "true", dpr: "auto" }} />
       <Image cloudName="testing-hooks-upload" publicId="test toasts" transformations={{ responsive: "true", dpr: "auto" }} />
-      <Image cloudName="testing-hooks-upload" publicId="test toasts" width="500" height="500" transformations={{ responsive: "true", dpr: "auto" }} />
-      <Image cloudName="testing-hooks-upload" publicId="anime-commission-1" transformations={{ responsive: "true", dpr: "auto" }} />
-      <Image cloudName="testing-hooks-upload" publicId="og-image_1_c2xx6n" width="500" height="500" transformations={{ responsive: "true", dpr: "auto" }} />
       <Gif publicId="trees" transformations={{ height: 0.3 }} />
       <Video publicId="trees" transformations={{ height: 0.3 }} />
     </div>
