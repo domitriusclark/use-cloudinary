@@ -20,7 +20,7 @@ export default function useVideo({ cloudName }) {
     { enabled: videoOptions }
   )
 
-  function generateUrl({ publicId, transformations }) {
+  function generateUrl({ publicId, transformations = {} } = {}) {
     if (!publicId) {
       throw new Error("Must provide a public id of your asset")
     }

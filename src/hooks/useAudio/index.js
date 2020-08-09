@@ -18,7 +18,7 @@ export default function useAudio({ cloudName }) {
     { enabled: audioOptions }
   )
 
-  function generateUrl({ publicId, transformations }) {
+  function generateUrl({ publicId, transformations = {} } = {}) {
     if (!publicId) {
       throw new Error("Must provide a public id of your asset")
     }

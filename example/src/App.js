@@ -21,6 +21,21 @@ function Audio({ publicId, transformations }) {
   )
 }
 
+function TestImage({ publicId, transformations }) {
+  const {
+    generateUrl,
+    url
+  } = useImage({ cloudName: "testing-hooks-upload" });
+
+  React.useEffect(() => {
+    generateUrl({
+      publicId: "anime-commission-1"
+    })
+  }, []);
+
+  return <img src={url} />
+}
+
 function Image({ publicId, transformations, width = "auto", height, cloudName }) {
   const {
     generateUrl,
@@ -104,6 +119,7 @@ function Gif({ publicId, transformations }) {
 const App = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <TestImage />
       <Audio cloudName="testing-hooks-upload" publicId="game-sounds/switch" transformations={{ responsive: "true", dpr: "auto" }} />
       <Image cloudName="testing-hooks-upload" publicId="test toasts" transformations={{ responsive: "true", dpr: "auto" }} />
       <Image cloudName="testing-hooks-upload" publicId="test toasts" width="500" height="500" transformations={{ responsive: "true", dpr: "auto" }} />
