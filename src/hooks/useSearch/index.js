@@ -81,6 +81,10 @@ export default function useSearch({ endpoint } = {}) {
       }
     }
 
+    if (!searchConfig.hasOwnProperty('config')) {
+      return searchConfigs.config = {}
+    }
+
 
     // this will allow you to pass in your own configured search expression for granular control
     if (expressionConfig.trim().length === 0) {
@@ -90,7 +94,8 @@ export default function useSearch({ endpoint } = {}) {
     const res = await fetch(endpoint, {
       method: "POST",
       body: JSON.stringify({
-        expression: expressionConfig
+        expression: expressionConfig,
+        ...searchConfig.config
       })
     });
 
