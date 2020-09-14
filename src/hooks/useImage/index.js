@@ -11,9 +11,12 @@ export default function useImage({ cloudName } = {}) {
     triggerOnce: true
   })
 
-  if (!cloudName) {
-    throw new Error("Please enter a valid cloud name")
-  }
+
+  // Need a better checking solution
+
+  // if (!cloudName) {
+  //   throw new Error("Please enter a valid cloud name")
+  // }
 
   function blurredPlaceholderUrl({ publicId, width, height }) {
     if (!width && !height) {
