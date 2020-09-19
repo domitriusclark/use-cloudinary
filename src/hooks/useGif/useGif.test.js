@@ -10,7 +10,7 @@ describe("useGif", () => {
     await act(async () => await expect(result.error).toBeInstanceOf(Error));
   });
 
-  it("throws an error when no public_id is provided to getGif", async () => {
+  it("throws an error when no publicId is provided to generateUrl", async () => {
     const { result, waitForNextUpdate } = renderHook(() =>
       useGif({ cloud_name: "testing-hooks-upload" })
     );
@@ -21,7 +21,7 @@ describe("useGif", () => {
     await waitForNextUpdate();
   });
 
-  it("updates status to loading when calling getGif", async () => {
+  it("updates status to loading when calling generateUrl", async () => {
     const { result, waitForNextUpdate } = renderHook(() =>
       useGif({ cloudName: "testing-hooks-upload" })
     );
