@@ -1,19 +1,17 @@
-import { renderHook, act, cleanup } from '@testing-library/react-hooks';
-import { Server } from 'miragejs';
+import { renderHook, act, cleanup } from "@testing-library/react-hooks";
+import { Server, createServer } from "miragejs";
 
-import { useSearch } from '../../index';
+import { useSearch } from "../../index";
 
-
-describe('useSearch', () => {
+describe("useSearch", () => {
   afterEach(cleanup);
 
-  it('throws an error with no endpoint', () => {
+  it("throws an error with no endpoint", () => {
     const { result } = renderHook(() => useSearch());
     expect(result.error).toBeInstanceOf(Error);
-  })
+  });
 
-  it('returns status loading when a search is made', async () => {
-    let sendResponse;
+  it("returns status loading when a search is made", async () => {
     let server = new Server({
       routes() {
         this.post("/example-endpoint", () => {
@@ -24,39 +22,42 @@ describe('useSearch', () => {
       },
     });
 
-    const { result } = renderHook(() => useSearch({ endpoint: '/example-endpoint' }));
+    const { result } = renderHook(() =>
+      useSearch({ endpoint: "/example-endpoint" })
+    );
 
     act(() => {
       result.current.search({
-        expression: "resource_type:image"
-      })
+        expression: "resource_type:image",
+      });
     });
 
-    expect(await result.current.status).toBe("loading");
+    expect(await result.current.isLoading).toBeTruthy();
 
-    sendResponse();
     server.shutdown();
-  })
+  });
 
-  it('updates data to an array on successful request', async () => {
+  it("updates data to an array on successful request", async () => {
     let server = new Server({
       routes() {
         this.post("/example-endpoint", () => ({
           resources: [
             { id: 1, public_id: "image1" },
             { id: 2, public_id: "image2" },
-            { id: 3, public_id: "image3" }
-          ]
+            { id: 3, public_id: "image3" },
+          ],
         }));
       },
     });
 
-    const { result, waitForNextUpdate } = renderHook(() => useSearch({ endpoint: '/example-endpoint' }));
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useSearch({ endpoint: "/example-endpoint" })
+    );
 
     act(() => {
       result.current.search({
-        expression: "resource_type:image"
-      })
+        expression: "resource_type:image",
+      });
     });
 
     await waitForNextUpdate();
@@ -71,4 +72,4 @@ describe('useSearch', () => {
   it("returns an error when the request fails", () => {
     // TODO: TEST FOR FAILURE
   });
-})
+});
