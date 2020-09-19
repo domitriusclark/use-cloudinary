@@ -10,18 +10,18 @@ describe("useAudio", () => {
     await act(async () => await expect(result.error).toBeInstanceOf(Error));
   });
 
-  it("throws an error when no public_id is provided to getAudio", async () => {
+  it("throws an error when no publicId is provided to generateUrl", async () => {
     const { result, waitForNextUpdate } = renderHook(() =>
       useAudio({ cloud_name: "testing-hooks-upload" })
     );
     await act(async () => {
-      await expect(() => result.current.getAudio()).toThrow();
+      await expect(() => result.current.generateUrl()).toThrow();
     });
 
     await waitForNextUpdate();
   });
 
-  it("updates status to loading when calling getAudio", async () => {
+  it("updates status to loading when calling generateUrl", async () => {
     const { result, waitForNextUpdate } = renderHook(() =>
       useAudio({ cloudName: "testing-hooks-upload" })
     );
