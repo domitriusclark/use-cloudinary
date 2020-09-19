@@ -12,7 +12,7 @@ describe("useImage", () => {
   //   await act(async () => await expect(result.error).toBeInstanceOf(Error))
   // });
 
-  it("throws an error when no public_id is provided to getImage", async () => {
+  it("throws an error when no publicId is provided to generateUrl", async () => {
     const { result, waitForNextUpdate } = renderHook(() =>
       useImage({ cloudName: "testing-hooks-upload" })
     );
@@ -21,7 +21,7 @@ describe("useImage", () => {
     });
   });
 
-  it("updates status to loading when calling getImage", async () => {
+  it("updates status to loading when calling generateUrl", async () => {
     const { result, waitForNextUpdate } = renderHook(() =>
       useImage({ cloudName: "testing-hooks-upload" })
     );
