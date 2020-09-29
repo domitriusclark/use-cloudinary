@@ -1,5 +1,5 @@
-import { useMutation } from 'react-query';
-import fetch from 'isomorphic-unfetch';
+import { useMutation } from "react-query";
+import fetch from "isomorphic-unfetch";
 
 export default function useSearch({ endpoint } = {}) {
   if (!endpoint) {
@@ -36,72 +36,73 @@ export default function useSearch({ endpoint } = {}) {
       search({ expression: "public_id=your-public-id AND aspect_ratio:16:9" })
   */
 
-  const [search, { data, isLoading, isError, isIdle, isSuccess, error }] = useMutation(async (searchConfig) => {
+  const [
+    search,
+    { data, isLoading, isError, isIdle, isSuccess, error },
+  ] = useMutation(async (searchConfig) => {
     /* 
       The below searchConfig checks will allow you to use an opinionated (and growing) search w/ object configuration
       If you want to make more granular search decisions, pass the `expression` key and provide the typical Cloudinary search expression string
     */
-    if (searchConfig.hasOwnProperty('publicId')) {
+    if (searchConfig.hasOwnProperty("publicId")) {
       if (expressionConfig.trim().length === 0) {
-        expressionConfig = `public_id${searchConfig.publicId}`
+        expressionConfig = `public_id${searchConfig.publicId}`;
       } else {
         expressionConfig + ` AND public_id${searchConfig.publicId}`;
       }
     }
 
-    if (searchConfig.hasOwnProperty('resourceType')) {
+    if (searchConfig.hasOwnProperty("resourceType")) {
       if (expressionConfig.trim().length === 0) {
-        expressionConfig = `resource_type=${searchConfig.resourceType}`
+        expressionConfig = `resource_type=${searchConfig.resourceType}`;
       } else {
-        expressionConfig + ` AND resource_type=${searchConfig.resourceType}`
+        expressionConfig + ` AND resource_type=${searchConfig.resourceType}`;
       }
     }
 
-    if (searchConfig.hasOwnProperty('folder')) {
+    if (searchConfig.hasOwnProperty("folder")) {
       if (expressionConfig.trim().length === 0) {
-        expressionConfig = `folder=${searchConfig.folder}`
+        expressionConfig = `folder=${searchConfig.folder}`;
       } else {
         expressionConfig + ` AND folder=${searchConfig.folder}`;
       }
     }
 
-    if (searchConfig.hasOwnProperty('tags')) {
+    if (searchConfig.hasOwnProperty("tags")) {
       if (expressionConfig.trim().length === 0) {
-        expressionConfig = `tags=${searchConfig.tags}`
+        expressionConfig = `tags=${searchConfig.tags}`;
       } else {
         expressionConfig + ` AND tags=${searchConfig.tags}`;
       }
     }
 
-    if (searchConfig.hasOwnProperty('aspectRatio')) {
+    if (searchConfig.hasOwnProperty("aspectRatio")) {
       if (expressionConfig.trim().length === 0) {
-        expressionConfig = `aspect_ratio="${searchConfig.aspectRatio}"`
+        expressionConfig = `aspect_ratio="${searchConfig.aspectRatio}"`;
       } else {
         expressionConfig + ` AND aspect_ratio="${searchConfig.aspectRatio}"`;
       }
     }
 
-    if (!searchConfig.hasOwnProperty('config')) {
-      return searchConfigs.config = {}
+    if (!searchConfig.hasOwnProperty("config")) {
+      return (searchConfig.config = {});
     }
-
 
     // this will allow you to pass in your own configured search expression for granular control
     if (expressionConfig.trim().length === 0) {
-      expressionConfig = searchConfig
+      expressionConfig = searchConfig;
     }
 
     const res = await fetch(endpoint, {
       method: "POST",
       body: JSON.stringify({
         expression: expressionConfig,
-        ...searchConfig.config
-      })
+        ...searchConfig.config,
+      }),
     });
 
     return res.json();
   });
 
-
-  return { search, data, isLoading, isError, isIdle, isSuccess, error }
-} 
+  return { search, data, isLoading, isError, isIdle, isSuccess, error };
+}

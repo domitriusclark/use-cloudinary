@@ -1,47 +1,49 @@
-import { renderHook, act, cleanup } from '@testing-library/react-hooks';
+import { renderHook, act, cleanup } from "@testing-library/react-hooks";
 
-import {
-  useGif,
-} from '../../index';
+import { useGif } from "../../index";
 
-describe('useGif', () => {
-  afterEach(cleanup)
+describe("useGif", () => {
+  afterEach(cleanup);
 
   it("throws an error when no cloud name is provided", async () => {
     const { result } = renderHook(() => useGif());
-    await act(async () => await expect(result.error).toBeInstanceOf(Error))
+    await act(async () => await expect(result.error).toBeInstanceOf(Error));
   });
 
-  it("throws an error when no public_id is provided to getGif", async () => {
-    const { result, waitForNextUpdate } = renderHook(() => useGif({ cloud_name: "testing-hooks-upload" }));
+  it("throws an error when no publicId is provided to generateUrl", async () => {
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useGif({ cloud_name: "testing-hooks-upload" })
+    );
     await act(async () => {
       await expect(() => result.current.getGif()).toThrow();
-    })
-
-    await waitForNextUpdate()
-  });
-
-  it("updates status to loading when calling getGif", async () => {
-    const { result, waitForNextUpdate } = renderHook(() => useGif({ cloud_name: "testing-hooks-upload" }));
-    await act(async () => {
-      await result.current.getGif({ public_id: "test toasts" })
-      expect(result.current.status).toBe("loading");
     });
 
-    await waitForNextUpdate()
+    await waitForNextUpdate();
+  });
 
-    expect(result.current.status).toBe("success");
+  it("updates status to loading when calling generateUrl", async () => {
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useGif({ cloudName: "testing-hooks-upload" })
+    );
+    await act(async () => {
+      await result.current.generateUrl({ publicId: "test toasts" });
+      expect(result.current.isLoading).toBeTruthy();
+    });
+
+    await waitForNextUpdate();
   });
 
   it("updates data to a Cloudinary URL on successful request", async () => {
-    const { result, waitForNextUpdate } = renderHook(() => useGif({ cloud_name: "testing-hooks-upload" }));
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useGif({ cloudName: "testing-hooks-upload" })
+    );
 
     await act(async () => {
-      result.current.getGif({ public_id: "test toasts" })
+      result.current.generateUrl({ publicId: "test toasts" });
     });
 
-    await act(async () => await waitForNextUpdate())
+    await act(async () => await waitForNextUpdate());
 
-    expect(result.current.data).toMatch(/https?:\/\/res\.cloudinary\.com\/\S+/)
+    expect(result.current.url).toMatch(/https?:\/\/res\.cloudinary\.com\/\S+/);
   });
-})
+});

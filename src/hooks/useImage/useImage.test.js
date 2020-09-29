@@ -1,46 +1,51 @@
-import { renderHook, act, cleanup } from '@testing-library/react-hooks';
+import { renderHook, act, cleanup } from "@testing-library/react-hooks";
 
-import {
-  useImage,
-} from '../../index';
+import { useImage } from "../../index";
 
-describe('useImage', () => {
-  afterEach(cleanup)
-  it("throws an error when no cloud name is provided", async () => {
-    const { result } = renderHook(() => useImage());
-    await act(async () => await expect(result.error).toBeInstanceOf(Error))
+describe("useImage", () => {
+  afterEach(cleanup);
+
+  // condition for hook to throw error has been commented
+
+  // it("throws an error when no cloud name is provided", async () => {
+  //   const { result } = renderHook(() => useImage());
+  //   await act(async () => await expect(result.error).toBeInstanceOf(Error))
+  // });
+
+  it("throws an error when no publicId is provided to generateUrl", async () => {
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useImage({ cloudName: "testing-hooks-upload" })
+    );
+    await act(async () => {
+      await expect(() => result.current.generateUrl()).toThrow();
+    });
   });
 
-  it("throws an error when no public_id is provided to getImage", async () => {
-    const { result, waitForNextUpdate } = renderHook(() => useImage({ cloud_name: "testing-hooks-upload" }));
+  it("updates status to loading when calling generateUrl", async () => {
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useImage({ cloudName: "testing-hooks-upload" })
+    );
     await act(async () => {
-      await expect(() => result.current.getImage()).toThrow();
+      await result.current.generateUrl({ publicId: "test toasts" });
+      expect(result.current.isLoading).toBeTruthy();
     });
 
-    await waitForNextUpdate()
-  });
+    await waitForNextUpdate();
 
-  it("updates status to loading when calling getImage", async () => {
-    const { result, waitForNextUpdate } = renderHook(() => useImage({ cloud_name: "testing-hooks-upload" }));
-    await act(async () => {
-      await result.current.getImage({ public_id: "test toasts" })
-      expect(result.current.status).toBe("loading");
-    });
-
-    await waitForNextUpdate()
-
-    expect(result.current.status).toBe("success");
+    expect(result.current.isSuccess).toBeTruthy();
   });
 
   it("updates data to a Cloudinary URL on successful request", async () => {
-    const { result, waitForNextUpdate } = renderHook(() => useImage({ cloud_name: "testing-hooks-upload" }));
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useImage({ cloudName: "testing-hooks-upload" })
+    );
 
     await act(async () => {
-      await result.current.getImage({ public_id: "test toasts" })
+      await result.current.generateUrl({ publicId: "test toasts" });
     });
 
-    await act(async () => await waitForNextUpdate())
+    await act(async () => await waitForNextUpdate());
 
-    expect(result.current.data).toMatch(/https?:\/\/res\.cloudinary\.com\/\S+/)
+    expect(result.current.url).toMatch(/https?:\/\/res\.cloudinary\.com\/\S+/);
   });
-})
+});
