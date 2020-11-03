@@ -1,7 +1,7 @@
 {
   "name": "use-cloudinary",
-  "version": "3.1.7",
-  "description": "Hooks created to wrap core cloudinary features for the client",
+  "version": "4.0.0",
+  "description": "Lightweight hooks for generating URL's for cloudinary assets",
   "author": "domitriusclark",
   "license": "MIT",
   "repository": "domitriusclark/use-cloudinary",
@@ -71,10 +71,6 @@
   "dependencies": {
     "@babel/runtime": "^7.9.2",
     "@charlietango/use-native-lazy-loading": "^1.7.1",
-    "cloudinary-core": "^2.8.2",
-    "isomorphic-unfetch": "^3.0.0",
-    "lodash": "^4.17.15",
-    "react-intersection-observer": "^8.26.2",
-    "react-query": "^2.0.0"
+    "react-intersection-observer": "^8.26.2"
   }
 }
