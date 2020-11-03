@@ -4,6 +4,6 @@ export default function useAudio(cloudName) {
   const generateGifUrl = createCloudinaryUrl(cloudName, 'video');
 
   return {
-    generateUrlGifUrl
+    generateGifUrl
   }
 }
