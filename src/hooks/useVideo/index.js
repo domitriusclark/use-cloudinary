@@ -5,5 +5,5 @@ export default function useVideo(cloudName) {
 
   return {
     generateUrl
-  }
-}
+  };
+};

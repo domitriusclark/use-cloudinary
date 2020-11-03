@@ -1,11 +1,10 @@
-import TRANSFORM_OPTIONS from './constants';
+import TRANSFORM_OPTIONS from "./constants";
 
-const createCloudinaryUrl = (cloudName, assetType) => ({
+const createCloudinaryUrl = (cloudName, asset) => ({
   config = {},
   delivery,
-  transformation
+  transformation = {}
 }) => {
-
   const fullConfig = {
     ...config,
     cloud: {
@@ -31,23 +30,94 @@ const createCloudinaryUrl = (cloudName, assetType) => ({
     return newTransforms.join();
   }
 
+  function configureTransformations(asset, transformation) {
+    switch (asset) {
+      case "image":
+        // Attach { crop: 'scale' } automatically when height or width options are supplied. This is to handle applying those transformations properly
+        if (
+          transformation.hasOwnProperty("width") ||
+          (transformation.hasOwnProperty("height") &&
+            !transformation.hasOwnProperty("crop"))
+        ) {
+          transformation.crop = "scale";
+        }
+
+        // Attach { fetchFormat: 'auto' } automatically when no config is supplied. This will deliver the best image format automatically depending on your browser
+        if (!transformation.hasOwnProperty("fetchFormat" || "fetch")) {
+          transformation.fetchFormat = "auto";
+        }
+
+        // Attach { quality: 'auto' } automatically when no config is supplied
+        if (!transformation.hasOwnProperty("quality")) {
+          transformation.quality = "auto";
+        }
+
+        return normalizeTransforms(transformation);
+
+      case "video":
+        // Attach { crop: 'scale' } automatically when height or width options are supplied. This is to handle applying those transformations properly
+        if (
+          (transformation.hasOwnProperty("width") ||
+            transformation.hasOwnProperty("height")) &&
+          !transformation.hasOwnProperty("crop")
+        ) {
+          transformation.crop = "scale";
+        }
+
+        // Attach { fetchFormat: 'auto' } automatically when no config is supplied. This will deliver the best image format automatically depending on your browser
+        if (!transformation.hasOwnProperty("fetchFormat" || "fetch")) {
+          transformation.fetchFormat = "auto";
+        }
+
+        // Attach { quality: 'auto' } automatically when no config is supplied
+        if (!transformation.hasOwnProperty("quality")) {
+          transformation.quality = "auto";
+        }
+
+        return normalizeTransforms(transformation);
+
+      case "gif":
+        // Attach { crop: 'scale' } automatically when height or width options are supplied. This is to handle applying those transformations properly
+        if (
+          (transformation.hasOwnProperty("width") ||
+            transformation.hasOwnProperty("height")) &&
+          !transformation.hasOwnProperty("crop")
+        ) {
+          transformation.crop = "scale";
+        }
+
+        // Attach { fetchFormat: 'auto' } automatically when no config is supplied. This will deliver the proper gif format automatically depending on your browser
+        if (!transformation.hasOwnProperty("fetchFormat")) {
+          transformation.fetchFormat = "auto";
+        }
+
+        return normalizeTransforms({
+          ...transformation,
+          flags: "animated",
+          effect: "loop"
+        });
+      case "audio":
+        return normalizeTransforms(transformation || "");
+
+      default:
+        return;
+    }
+  }
+
   const prefix = getUrlPrefix(fullConfig.cloud.cloudName);
   const storageType = handleStorageType(delivery);
   const signature = delivery.signature;
-  const transformationString = transformation
-    ? normalizeTransforms(transformation)
-    : "";
-  const version = getUrlVersion(fullConfig.url, delivery);
+  const version = "v1";
   const publicId = delivery.publicId;
 
   const url = [
     prefix,
-    assetType,
+    handleAssetType(asset),
     storageType,
     signature,
-    transformationString,
+    configureTransformations(asset, transformation),
     version,
-    publicId
+    configurePublicId(asset, publicId)
   ]
     .filter((a) => a)
     .join("/")
@@ -56,16 +126,42 @@ const createCloudinaryUrl = (cloudName, assetType) => ({
   return url;
 };
 
-function isFileName(publicId) {
-  return publicId.indexOf("/") < 0;
+function handleAssetType(asset) {
+  switch (asset) {
+    case "image":
+      return "image";
+
+    case "video":
+      return "video";
+
+    case "gif":
+      return "video";
+
+    case "audio":
+      return "video";
+
+    default:
+      return "";
+  }
 }
 
-function isUrl(publicId) {
-  return publicId.match(/^https?:\//);
-}
+function configurePublicId(asset, publicId) {
+  switch (asset) {
+    case "image":
+      return publicId;
 
-function publicIdContainsVersion(publicId) {
-  return publicId.match(/^v[0-9]+/);
+    case "video":
+      return publicId;
+
+    case "gif":
+      return `${publicId}.gif`;
+
+    case "audio":
+      return `${publicId}.mp4`;
+
+    default:
+      return publicId;
+  }
 }
 
 function getUrlPrefix(cloudName) {
@@ -86,25 +182,6 @@ function handleStorageType(delivery) {
   }
 
   return delivery.storageType;
-}
-
-function getUrlVersion(urlConfig = true, delivery) {
-  const shouldForceVersion = urlConfig.forceVersion !== false;
-
-  if (delivery.version) {
-    return `v${delivery.version}`;
-  }
-
-  // In all these conditions we never force a version
-  if (
-    publicIdContainsVersion(delivery.publicId) ||
-    isUrl(delivery.publicId) ||
-    isFileName(delivery.publicId)
-  ) {
-    return "";
-  }
-
-  return shouldForceVersion ? "v1" : "";
 }
 
 export default createCloudinaryUrl;
