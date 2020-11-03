@@ -65,10 +65,10 @@ export default function useImage(cloudName) {
     }
   }
 
-  const generateUrl = createCloudinaryUrl(cloudName, "image");
+  const generateImageUrl = createCloudinaryUrl(cloudName, "image");
 
   return {
-    generateUrl,
+    generateImageUrl,
     blurredPlaceholderUrl,
     supportsLazyLoading,
     ref,
