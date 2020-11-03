@@ -69,7 +69,6 @@
     "rollup-plugin-url": "^2.1.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.9.2",
     "@charlietango/use-native-lazy-loading": "^1.7.1",
     "react-intersection-observer": "^8.26.2"
   }
