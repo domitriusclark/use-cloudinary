@@ -1,31 +1,9 @@
-import * as React from 'react';
-import { useQuery } from 'react-query';
-import cloudinary from 'cloudinary-core'
+import createCloudinaryUrl from '../../utils/createCloudinaryUrl';
 
-export default function useAudio({ cloudName }) {
-  const cld = cloudinary.Cloudinary.new({ cloud_name: cloudName }, { secure: true })
+export default function useAudio(cloudName) {
+  const generateAudioUrl = createCloudinaryUrl(cloudName, 'video');
 
-  const [audioOptions, setAudioOptions] = React.useState({
-    publicId: '',
-    transformations: {}
-  });
-
-  const { data: url, isLoading, isError, isSuccess, isIdle, error } = useQuery(
-    [`${audioOptions.publicId}-url`, audioOptions],
-    async (key, audioOptions) => await cld.video_url(`${audioOptions.publicId}.mp3`, {
-      ...audioOptions.transformations,
-    }),
-    { enabled: audioOptions }
-  )
-
-  function generateUrl({ publicId, transformations = {} } = {}) {
-    if (!publicId) {
-      throw new Error("Must provide a public id of your asset")
-    }
-
-    return setAudioOptions({ publicId, transformations })
+  return {
+    generateAudioUrl
   }
-
-  return { generateUrl, url, isLoading, isError, isSuccess, isIdle, error }
-
 }
