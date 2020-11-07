@@ -11,7 +11,7 @@ export default function useImage(cloudName) {
 
   function blurredPlaceholderUrl({ publicId, width, height }) {
     if (!width && !height) {
-      return generateUrl({
+      return generateImageUrl({
         delivery: {
           publicId
         },
@@ -23,7 +23,7 @@ export default function useImage(cloudName) {
       })
 
     } else if (!height) {
-      return generateUrl({
+      return generateImageUrl({
         delivery: {
           publicId
         },
@@ -36,7 +36,7 @@ export default function useImage(cloudName) {
         }
       })
     } else if (!width) {
-      return generateUrl({
+      return generateImageUrl({
         delivery: {
           publicId
         },
@@ -49,7 +49,7 @@ export default function useImage(cloudName) {
         }
       })
     } else {
-      return generateUrl({
+      return generateImageUrl({
         delivery: {
           publicId
         },
