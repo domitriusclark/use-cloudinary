@@ -176,10 +176,21 @@ function getUrlPrefix(cloudName) {
 }
 
 function handleStorageType(delivery) {
+  const isUrl = (url) =>
+    url.match(
+      /^(ht|f)tps?:\/\/[a-z0-9-.]+\.[a-z]{2,4}\/?([^\s<>#%",{}\\|\\^[\]`]+)?$/
+    );
+
+  if (isUrl(delivery.publicId)) {
+    return "fetch";
+  }
+
   //default to upload
   if (!delivery || !delivery.storageType) {
     return "upload";
   }
+
+
 
   return delivery.storageType;
 }
