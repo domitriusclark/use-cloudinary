@@ -19,15 +19,27 @@ const createCloudinaryUrl = (cloudName, asset) => ({
 
   function normalizeTransforms(transforms) {
     const newTransforms = [];
-    Object.keys(TRANSFORM_OPTIONS).map((option) =>
-      Object.keys(transforms).map((t) => {
-        if (option === t) {
-          newTransforms.push(`${TRANSFORM_OPTIONS[option]}${transforms[t]}`);
-        }
-      })
-    );
+    if (Array.isArray(transforms)) {
+      return transforms
+        .map((transform) => {
+          return Object.entries(transform)
+            .map((key) => {
+              return `${TRANSFORM_OPTIONS[key[0]]}${key[1]}`;
+            })
+            .join(",");
+        })
+        .join("/");
+    } else {
+      Object.keys(TRANSFORM_OPTIONS).map((option) =>
+        Object.keys(transforms).map((t) => {
+          if (option === t) {
+            newTransforms.push(`${TRANSFORM_OPTIONS[option]}${transforms[t]}`);
+          }
+        })
+      );
 
-    return newTransforms.join();
+      return newTransforms.join();
+    }
   }
 
   function configureTransformations(asset, transformation) {
