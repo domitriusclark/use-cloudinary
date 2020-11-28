@@ -1,6 +1,6 @@
 {
   "name": "use-cloudinary",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "Lightweight hooks for generating URL's for cloudinary assets",
   "author": "domitriusclark",
   "license": "MIT",
