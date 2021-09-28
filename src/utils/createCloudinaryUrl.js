@@ -178,7 +178,7 @@ function configurePublicId(asset, publicId) {
 
 function getUrlPrefix(cloudName) {
   // defaults
-  const protocol = "http://";
+  const protocol = "https://";
   const cdnPart = "";
   const subdomain = "res";
   const host = ".cloudinary.com";
